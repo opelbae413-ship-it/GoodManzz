@@ -1,0 +1,251 @@
+local Library = {}
+
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Fungsi Drag (Mendukung Sentuhan Touch & Mouse)
+local function makeDraggable(frame, handle)
+    handle = handle or frame
+    local dragging, dragInput, dragStart, startPos
+
+    handle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    handle.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+function Library:CreateWindow(config)
+    config = config or {}
+    local titleText = config.Name or "Simple Hub"
+    local setKey = config.Key or ""
+    local useKeySystem = config.KeySystem or false
+
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "CustomSimpleLib"
+
+    if gethui then
+        ScreenGui.Parent = gethui()
+    elseif syn and syn.protect_gui then
+        syn.protect_gui(ScreenGui)
+        ScreenGui.Parent = CoreGui
+    elseif CoreGui:FindFirstChild("RobloxGui") then
+        ScreenGui.Parent = CoreGui
+    else
+        ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    end
+
+    -- Key System
+    if useKeySystem and setKey ~= "" then
+        local KeyFrame = Instance.new("Frame")
+        KeyFrame.Size = UDim2.new(0, 280, 0, 140)
+        KeyFrame.Position = UDim2.new(0.5, -140, 0.5, -70)
+        KeyFrame.BackgroundColor3 = Color3.fromRGB(22, 24, 32)
+        KeyFrame.BorderSizePixel = 0
+        KeyFrame.Parent = ScreenGui
+
+        local KeyCorner = Instance.new("UICorner")
+        KeyCorner.CornerRadius = UDim.new(0, 10)
+        KeyCorner.Parent = KeyFrame
+
+        makeDraggable(KeyFrame, KeyFrame)
+
+        local KeyTitle = Instance.new("TextLabel")
+        KeyTitle.Size = UDim2.new(1, 0, 0, 35)
+        KeyTitle.BackgroundTransparency = 1
+        KeyTitle.Text = "Key System"
+        KeyTitle.TextColor3 = Color3.fromRGB(240, 240, 245)
+        KeyTitle.TextSize = 14
+        KeyTitle.Font = Enum.Font.GothamBold
+        KeyTitle.Parent = KeyFrame
+
+        local KeyInput = Instance.new("TextBox")
+        KeyInput.Size = UDim2.new(1, -30, 0, 32)
+        KeyInput.Position = UDim2.new(0, 15, 0, 42)
+        KeyInput.BackgroundColor3 = Color3.fromRGB(32, 35, 48)
+        KeyInput.PlaceholderText = "Masukkan Key..."
+        KeyInput.Text = ""
+        KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+        KeyInput.TextSize = 12
+        KeyInput.Font = Enum.Font.Gotham
+        KeyInput.Parent = KeyFrame
+
+        local KeyInputCorner = Instance.new("UICorner")
+        KeyInputCorner.CornerRadius = UDim.new(0, 6)
+        KeyInputCorner.Parent = KeyInput
+
+        local SubmitBtn = Instance.new("TextButton")
+        SubmitBtn.Size = UDim2.new(1, -30, 0, 30)
+        SubmitBtn.Position = UDim2.new(0, 15, 0, 85)
+        SubmitBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
+        SubmitBtn.Text = "Submit Key"
+        SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SubmitBtn.TextSize = 12
+        SubmitBtn.Font = Enum.Font.GothamBold
+        SubmitBtn.Parent = KeyFrame
+
+        local SubmitCorner = Instance.new("UICorner")
+        SubmitCorner.CornerRadius = UDim.new(0, 6)
+        SubmitCorner.Parent = SubmitBtn
+
+        local verified = false
+        SubmitBtn.MouseButton1Click:Connect(function()
+            if KeyInput.Text == setKey then
+                verified = true
+                KeyFrame:Destroy()
+            else
+                KeyInput.Text = ""
+                KeyInput.PlaceholderText = "Key Salah!"
+            end
+        end)
+
+        repeat task.wait() until verified or not ScreenGui.Parent
+    end
+
+    -- Window Utama
+    local Main = Instance.new("Frame")
+    Main.Name = "Main"
+    Main.Size = UDim2.new(0, 290, 0, 310)
+    Main.Position = UDim2.new(0.5, -145, 0.5, -155)
+    Main.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
+    Main.BorderSizePixel = 0
+    Main.ClipsDescendants = true
+    Main.Parent = ScreenGui
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 10)
+    Corner.Parent = Main
+
+    local Header = Instance.new("Frame")
+    Header.Size = UDim2.new(1, 0, 0, 40)
+    Header.BackgroundTransparency = 1
+    Header.Parent = Main
+
+    makeDraggable(Main, Header)
+
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, -70, 1, 0)
+    Title.Position = UDim2.new(0, 12, 0, 0)
+    Title.BackgroundTransparency = 1
+    Title.Text = titleText
+    Title.TextColor3 = Color3.fromRGB(230, 235, 245)
+    Title.TextSize = 14
+    Title.Font = Enum.Font.GothamBold
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Header
+
+    -- Tombol Minimize (-) & Close (X)
+    local MinBtn = Instance.new("TextButton")
+    MinBtn.Size = UDim2.new(0, 24, 0, 24)
+    MinBtn.Position = UDim2.new(1, -56, 0, 8)
+    MinBtn.BackgroundColor3 = Color3.fromRGB(35, 38, 52)
+    MinBtn.Text = "-"
+    MinBtn.TextColor3 = Color3.fromRGB(180, 185, 200)
+    MinBtn.TextSize = 14
+    MinBtn.Font = Enum.Font.GothamBold
+    MinBtn.Parent = Header
+
+    local MinCorner = Instance.new("UICorner")
+    MinCorner.CornerRadius = UDim.new(0, 6)
+    MinCorner.Parent = MinBtn
+
+    local CloseBtn = Instance.new("TextButton")
+    CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+    CloseBtn.Position = UDim2.new(1, -28, 0, 8)
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(35, 38, 52)
+    CloseBtn.Text = "✕"
+    CloseBtn.TextColor3 = Color3.fromRGB(180, 185, 200)
+    CloseBtn.TextSize = 11
+    CloseBtn.Font = Enum.Font.GothamBold
+    CloseBtn.Parent = Header
+
+    local CloseCorner = Instance.new("UICorner")
+    CloseCorner.CornerRadius = UDim.new(0, 6)
+    CloseCorner.Parent = CloseBtn
+
+    -- Container Tombol/Elemen
+    local Container = Instance.new("ScrollingFrame")
+    Container.Size = UDim2.new(1, -20, 1, -50)
+    Container.Position = UDim2.new(0, 10, 0, 42)
+    Container.BackgroundTransparency = 1
+    Container.BorderSizePixel = 0
+    Container.ScrollBarThickness = 2
+    Container.ScrollBarImageColor3 = Color3.fromRGB(70, 75, 100)
+    Container.Parent = Main
+
+    local Layout = Instance.new("UIListLayout")
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
+    Layout.Padding = UDim.new(0, 8)
+    Layout.Parent = Container
+
+    Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 10)
+    end)
+
+    -- Fitur Minimize
+    local isMinimized = false
+    MinBtn.MouseButton1Click:Connect(function()
+        isMinimized = not isMinimized
+        if isMinimized then
+            TweenService:Create(Main, TweenInfo.new(0.2), {Size = UDim2.new(0, 290, 0, 40)}):Play()
+        else
+            TweenService:Create(Main, TweenInfo.new(0.2), {Size = UDim2.new(0, 290, 0, 310)}):Play()
+        end
+    end)
+
+    CloseBtn.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+
+    local Window = {}
+
+    function Window:AddButton(text, callback)
+        callback = callback or function() end
+        local Btn = Instance.new("TextButton")
+        Btn.Size = UDim2.new(1, 0, 0, 34)
+        Btn.BackgroundColor3 = Color3.fromRGB(30, 33, 46)
+        Btn.Text = text
+        Btn.TextColor3 = Color3.fromRGB(220, 225, 235)
+        Btn.TextSize = 12
+        Btn.Font = Enum.Font.GothamMedium
+        Btn.Parent = Container
+
+        local BtnCorner = Instance.new("UICorner")
+        BtnCorner.CornerRadius = UDim.new(0, 6)
+        BtnCorner.Parent = Btn
+
+        Btn.MouseButton1Click:Connect(function()
+            TweenService:Create(Btn, TweenInfo.new(0.08), {BackgroundColor3 = Color3.fromRGB(50, 55, 75)}):Play()
+            task.wait(0.08)
+            TweenService:Create(Btn, TweenInfo.new(0.08), {BackgroundColor3 = Color3.fromRGB(30, 33, 46)}):Play()
+            task.spawn(callback)
+        end)
+    end
+
+    return Window
+end
+
+return Library
