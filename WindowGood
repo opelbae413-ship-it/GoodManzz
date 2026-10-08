@@ -5,7 +5,140 @@ local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
--- Fungsi Drag (Mendukung Sentuhan Touch & Mouse)
+-- Parent UI (Kompatibel dengan berbagai Executor)
+local TargetParent
+if gethui then
+    TargetParent = gethui()
+elseif syn and syn.protect_gui then
+    local gui = Instance.new("ScreenGui")
+    syn.protect_gui(gui)
+    gui.Parent = CoreGui
+    TargetParent = gui
+elseif CoreGui:FindFirstChild("RobloxGui") then
+    TargetParent = CoreGui
+else
+    TargetParent = Players.LocalPlayer:WaitForChild("PlayerGui")
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "DarkGradientLibrary"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = TargetParent
+
+-- Notif Holder
+local NotifHolder = Instance.new("Frame")
+NotifHolder.Name = "NotifHolder"
+NotifHolder.Size = UDim2.new(0, 230, 1, -20)
+NotifHolder.Position = UDim2.new(1, -240, 0, 10)
+NotifHolder.BackgroundTransparency = 1
+NotifHolder.Parent = ScreenGui
+
+local NotifLayout = Instance.new("UIListLayout")
+NotifLayout.SortOrder = Enum.SortOrder.LayoutOrder
+NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+NotifLayout.Padding = UDim.new(0, 6)
+NotifLayout.Parent = NotifHolder
+
+-- SISTEM NOTIFIKASI TINGKAT LANJUT
+function Library:Notify(options)
+    options = typeof(options) == "table" and options or { Title = "Notifikasi", Content = tostring(options or ""), Type = "Info", Duration = 3 }
+    local title = options.Title or "Notifikasi"
+    local content = options.Content or ""
+    local notifType = options.Type or "Info" -- Success, Error, Warning, Info
+    local duration = options.Duration or 3
+
+    local typeColors = {
+        Success = Color3.fromRGB(46, 204, 113),
+        Error   = Color3.fromRGB(231, 76, 60),
+        Warning = Color3.fromRGB(241, 196, 15),
+        Info    = Color3.fromRGB(52, 152, 219)
+    }
+    local sideColor = typeColors[notifType] or typeColors.Info
+
+    local Card = Instance.new("Frame")
+    Card.Size = UDim2.new(1, 0, 0, 52)
+    Card.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+    Card.BackgroundTransparency = 1
+    Card.BorderSizePixel = 0
+    Card.ClipsDescendants = true
+    Card.Parent = NotifHolder
+
+    local CardCorner = Instance.new("UICorner")
+    CardCorner.CornerRadius = UDim.new(0, 8)
+    CardCorner.Parent = Card
+
+    local CardGradient = Instance.new("UIGradient")
+    CardGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 25)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 5, 5))
+    })
+    CardGradient.Rotation = 45
+    CardGradient.Parent = Card
+
+    local CardStroke = Instance.new("UIStroke")
+    CardStroke.Color = sideColor
+    CardStroke.Thickness = 1
+    CardStroke.Transparency = 1
+    CardStroke.Parent = Card
+
+    local SideBar = Instance.new("Frame")
+    SideBar.Size = UDim2.new(0, 4, 1, -12)
+    SideBar.Position = UDim2.new(0, 6, 0.5, -20)
+    SideBar.BackgroundColor3 = sideColor
+    SideBar.BorderSizePixel = 0
+    SideBar.BackgroundTransparency = 1
+    SideBar.Parent = Card
+
+    local SideCorner = Instance.new("UICorner")
+    SideCorner.CornerRadius = UDim.new(0, 2)
+    SideCorner.Parent = SideBar
+
+    local TitleLbl = Instance.new("TextLabel")
+    TitleLbl.Size = UDim2.new(1, -25, 0, 18)
+    TitleLbl.Position = UDim2.new(0, 18, 0, 6)
+    TitleLbl.BackgroundTransparency = 1
+    TitleLbl.Text = title
+    TitleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLbl.TextSize = 12
+    TitleLbl.Font = Enum.Font.GothamBold
+    TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLbl.TextTransparency = 1
+    TitleLbl.Parent = Card
+
+    local ContentLbl = Instance.new("TextLabel")
+    ContentLbl.Size = UDim2.new(1, -25, 0, 22)
+    ContentLbl.Position = UDim2.new(0, 18, 0, 24)
+    ContentLbl.BackgroundTransparency = 1
+    ContentLbl.Text = content
+    ContentLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ContentLbl.TextSize = 11
+    ContentLbl.Font = Enum.Font.Gotham
+    ContentLbl.TextXAlignment = Enum.TextXAlignment.Left
+    ContentLbl.TextWrapped = true
+    ContentLbl.TextTransparency = 1
+    ContentLbl.Parent = Card
+
+    -- Animasi Masuk Notifikasi
+    TweenService:Create(Card, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {BackgroundTransparency = 0.05}):Play()
+    TweenService:Create(CardStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
+    TweenService:Create(SideBar, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(TitleLbl, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+    TweenService:Create(ContentLbl, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+
+    task.delay(duration, function()
+        local closeTween = TweenService:Create(Card, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {BackgroundTransparency = 1})
+        TweenService:Create(CardStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
+        TweenService:Create(SideBar, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(TitleLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+        TweenService:Create(ContentLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+        closeTween:Play()
+        closeTween.Completed:Connect(function()
+            Card:Destroy()
+        end)
+    end)
+end
+
+-- Drag Function
 local function makeDraggable(frame, handle)
     handle = handle or frame
     local dragging, dragInput, dragStart, startPos
@@ -33,104 +166,23 @@ local function makeDraggable(frame, handle)
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             local delta = input.Position - dragStart
-            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            TweenService:Create(frame, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            }):Play()
         end
     end)
 end
 
 function Library:CreateWindow(config)
     config = config or {}
-    local titleText = config.Name or "Simple Hub"
-    local setKey = config.Key or ""
-    local useKeySystem = config.KeySystem or false
+    local titleText = config.Name or "Dark Hub"
 
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "CustomSimpleLib"
-
-    if gethui then
-        ScreenGui.Parent = gethui()
-    elseif syn and syn.protect_gui then
-        syn.protect_gui(ScreenGui)
-        ScreenGui.Parent = CoreGui
-    elseif CoreGui:FindFirstChild("RobloxGui") then
-        ScreenGui.Parent = CoreGui
-    else
-        ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-    end
-
-    -- Key System
-    if useKeySystem and setKey ~= "" then
-        local KeyFrame = Instance.new("Frame")
-        KeyFrame.Size = UDim2.new(0, 280, 0, 140)
-        KeyFrame.Position = UDim2.new(0.5, -140, 0.5, -70)
-        KeyFrame.BackgroundColor3 = Color3.fromRGB(22, 24, 32)
-        KeyFrame.BorderSizePixel = 0
-        KeyFrame.Parent = ScreenGui
-
-        local KeyCorner = Instance.new("UICorner")
-        KeyCorner.CornerRadius = UDim.new(0, 10)
-        KeyCorner.Parent = KeyFrame
-
-        makeDraggable(KeyFrame, KeyFrame)
-
-        local KeyTitle = Instance.new("TextLabel")
-        KeyTitle.Size = UDim2.new(1, 0, 0, 35)
-        KeyTitle.BackgroundTransparency = 1
-        KeyTitle.Text = "Key System"
-        KeyTitle.TextColor3 = Color3.fromRGB(240, 240, 245)
-        KeyTitle.TextSize = 14
-        KeyTitle.Font = Enum.Font.GothamBold
-        KeyTitle.Parent = KeyFrame
-
-        local KeyInput = Instance.new("TextBox")
-        KeyInput.Size = UDim2.new(1, -30, 0, 32)
-        KeyInput.Position = UDim2.new(0, 15, 0, 42)
-        KeyInput.BackgroundColor3 = Color3.fromRGB(32, 35, 48)
-        KeyInput.PlaceholderText = "Masukkan Key..."
-        KeyInput.Text = ""
-        KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-        KeyInput.TextSize = 12
-        KeyInput.Font = Enum.Font.Gotham
-        KeyInput.Parent = KeyFrame
-
-        local KeyInputCorner = Instance.new("UICorner")
-        KeyInputCorner.CornerRadius = UDim.new(0, 6)
-        KeyInputCorner.Parent = KeyInput
-
-        local SubmitBtn = Instance.new("TextButton")
-        SubmitBtn.Size = UDim2.new(1, -30, 0, 30)
-        SubmitBtn.Position = UDim2.new(0, 15, 0, 85)
-        SubmitBtn.BackgroundColor3 = Color3.fromRGB(60, 110, 240)
-        SubmitBtn.Text = "Submit Key"
-        SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SubmitBtn.TextSize = 12
-        SubmitBtn.Font = Enum.Font.GothamBold
-        SubmitBtn.Parent = KeyFrame
-
-        local SubmitCorner = Instance.new("UICorner")
-        SubmitCorner.CornerRadius = UDim.new(0, 6)
-        SubmitCorner.Parent = SubmitBtn
-
-        local verified = false
-        SubmitBtn.MouseButton1Click:Connect(function()
-            if KeyInput.Text == setKey then
-                verified = true
-                KeyFrame:Destroy()
-            else
-                KeyInput.Text = ""
-                KeyInput.PlaceholderText = "Key Salah!"
-            end
-        end)
-
-        repeat task.wait() until verified or not ScreenGui.Parent
-    end
-
-    -- Window Utama
+    -- Frame Utama (Hitam Pekat & Ringkas)
     local Main = Instance.new("Frame")
     Main.Name = "Main"
-    Main.Size = UDim2.new(0, 290, 0, 310)
-    Main.Position = UDim2.new(0.5, -145, 0.5, -155)
-    Main.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
+    Main.Size = UDim2.new(0, 240, 0, 0) -- Mulai dari 0 untuk Animasi Execute
+    Main.Position = UDim2.new(0.5, -120, 0.5, -135)
+    Main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     Main.BorderSizePixel = 0
     Main.ClipsDescendants = true
     Main.Parent = ScreenGui
@@ -139,32 +191,59 @@ function Library:CreateWindow(config)
     Corner.CornerRadius = UDim.new(0, 10)
     Corner.Parent = Main
 
+    -- Gradasi Hitam Metalik
+    local MainGradient = Instance.new("UIGradient")
+    MainGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    })
+    MainGradient.Rotation = 135
+    MainGradient.Parent = Main
+
+    -- Outline Border Gradasi Putih-Abu
+    local MainStroke = Instance.new("UIStroke")
+    MainStroke.Color = Color3.fromRGB(255, 255, 255)
+    MainStroke.Thickness = 1
+    MainStroke.Transparency = 0.85
+    MainStroke.Parent = Main
+
+    local StrokeGradient = Instance.new("UIGradient")
+    StrokeGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(90, 90, 90)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 20))
+    })
+    StrokeGradient.Rotation = 45
+    StrokeGradient.Parent = MainStroke
+
+    -- Header Bar
     local Header = Instance.new("Frame")
-    Header.Size = UDim2.new(1, 0, 0, 40)
+    Header.Size = UDim2.new(1, 0, 0, 36)
     Header.BackgroundTransparency = 1
     Header.Parent = Main
 
     makeDraggable(Main, Header)
 
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, -70, 1, 0)
+    Title.Size = UDim2.new(1, -65, 1, 0)
     Title.Position = UDim2.new(0, 12, 0, 0)
     Title.BackgroundTransparency = 1
     Title.Text = titleText
-    Title.TextColor3 = Color3.fromRGB(230, 235, 245)
-    Title.TextSize = 14
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 13
     Title.Font = Enum.Font.GothamBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Header
 
-    -- Tombol Minimize (-) & Close (X)
+    -- Tombol Minimize (-) & Close (✕)
     local MinBtn = Instance.new("TextButton")
-    MinBtn.Size = UDim2.new(0, 24, 0, 24)
-    MinBtn.Position = UDim2.new(1, -56, 0, 8)
-    MinBtn.BackgroundColor3 = Color3.fromRGB(35, 38, 52)
+    MinBtn.Size = UDim2.new(0, 22, 0, 22)
+    MinBtn.Position = UDim2.new(1, -50, 0, 7)
+    MinBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     MinBtn.Text = "-"
-    MinBtn.TextColor3 = Color3.fromRGB(180, 185, 200)
-    MinBtn.TextSize = 14
+    MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinBtn.TextSize = 13
     MinBtn.Font = Enum.Font.GothamBold
     MinBtn.Parent = Header
 
@@ -173,12 +252,12 @@ function Library:CreateWindow(config)
     MinCorner.Parent = MinBtn
 
     local CloseBtn = Instance.new("TextButton")
-    CloseBtn.Size = UDim2.new(0, 24, 0, 24)
-    CloseBtn.Position = UDim2.new(1, -28, 0, 8)
-    CloseBtn.BackgroundColor3 = Color3.fromRGB(35, 38, 52)
+    CloseBtn.Size = UDim2.new(0, 22, 0, 22)
+    CloseBtn.Position = UDim2.new(1, -25, 0, 7)
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     CloseBtn.Text = "✕"
-    CloseBtn.TextColor3 = Color3.fromRGB(180, 185, 200)
-    CloseBtn.TextSize = 11
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseBtn.TextSize = 10
     CloseBtn.Font = Enum.Font.GothamBold
     CloseBtn.Parent = Header
 
@@ -186,49 +265,71 @@ function Library:CreateWindow(config)
     CloseCorner.CornerRadius = UDim.new(0, 6)
     CloseCorner.Parent = CloseBtn
 
-    -- Container Tombol/Elemen
+    -- Container Elemen
     local Container = Instance.new("ScrollingFrame")
-    Container.Size = UDim2.new(1, -20, 1, -50)
-    Container.Position = UDim2.new(0, 10, 0, 42)
+    Container.Size = UDim2.new(1, -16, 1, -44)
+    Container.Position = UDim2.new(0, 8, 0, 38)
     Container.BackgroundTransparency = 1
     Container.BorderSizePixel = 0
     Container.ScrollBarThickness = 2
-    Container.ScrollBarImageColor3 = Color3.fromRGB(70, 75, 100)
+    Container.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120)
     Container.Parent = Main
 
     local Layout = Instance.new("UIListLayout")
     Layout.SortOrder = Enum.SortOrder.LayoutOrder
-    Layout.Padding = UDim.new(0, 8)
+    Layout.Padding = UDim.new(0, 6)
     Layout.Parent = Container
 
     Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 10)
+        Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 8)
     end)
 
-    -- Fitur Minimize
+    -- === ANIMASI EXECUTE (OPENING) ===
+    local openTween = TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 240, 0, 270)
+    })
+    openTween:Play()
+    openTween.Completed:Connect(function()
+        Library:Notify({
+            Title = titleText,
+            Content = "Script Berhasil Di-execute!",
+            Type = "Success",
+            Duration = 3
+        })
+    end)
+
+    -- Logika Minimize
     local isMinimized = false
     MinBtn.MouseButton1Click:Connect(function()
         isMinimized = not isMinimized
-        if isMinimized then
-            TweenService:Create(Main, TweenInfo.new(0.2), {Size = UDim2.new(0, 290, 0, 40)}):Play()
-        else
-            TweenService:Create(Main, TweenInfo.new(0.2), {Size = UDim2.new(0, 290, 0, 310)}):Play()
-        end
+        local targetSize = isMinimized and UDim2.new(0, 240, 0, 36) or UDim2.new(0, 240, 0, 270)
+        TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            Size = targetSize
+        }):Play()
     end)
 
+    -- Logika Close
     CloseBtn.MouseButton1Click:Connect(function()
-        ScreenGui:Destroy()
+        local closeTween = TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 240, 0, 0)
+        })
+        closeTween:Play()
+        closeTween.Completed:Connect(function()
+            ScreenGui:Destroy()
+        end)
     end)
 
     local Window = {}
 
+    -- Komponen Button
     function Window:AddButton(text, callback)
         callback = callback or function() end
+
         local Btn = Instance.new("TextButton")
-        Btn.Size = UDim2.new(1, 0, 0, 34)
-        Btn.BackgroundColor3 = Color3.fromRGB(30, 33, 46)
+        Btn.Size = UDim2.new(1, 0, 0, 32)
+        Btn.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
         Btn.Text = text
-        Btn.TextColor3 = Color3.fromRGB(220, 225, 235)
+        Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         Btn.TextSize = 12
         Btn.Font = Enum.Font.GothamMedium
         Btn.Parent = Container
@@ -237,11 +338,108 @@ function Library:CreateWindow(config)
         BtnCorner.CornerRadius = UDim.new(0, 6)
         BtnCorner.Parent = Btn
 
+        local BtnGradient = Instance.new("UIGradient")
+        BtnGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(28, 28, 35)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 12))
+        })
+        BtnGradient.Rotation = 90
+        BtnGradient.Parent = Btn
+
+        local BtnStroke = Instance.new("UIStroke")
+        BtnStroke.Color = Color3.fromRGB(255, 255, 255)
+        BtnStroke.Thickness = 1
+        BtnStroke.Transparency = 0.9
+        BtnStroke.Parent = Btn
+
         Btn.MouseButton1Click:Connect(function()
-            TweenService:Create(Btn, TweenInfo.new(0.08), {BackgroundColor3 = Color3.fromRGB(50, 55, 75)}):Play()
-            task.wait(0.08)
-            TweenService:Create(Btn, TweenInfo.new(0.08), {BackgroundColor3 = Color3.fromRGB(30, 33, 46)}):Play()
+            -- Animasi Klik Glow
+            TweenService:Create(BtnStroke, TweenInfo.new(0.1), {Transparency = 0.3}):Play()
+            task.wait(0.12)
+            TweenService:Create(BtnStroke, TweenInfo.new(0.2), {Transparency = 0.9}):Play()
+
             task.spawn(callback)
+        end)
+    end
+
+    -- Komponen Toggle
+    function Window:AddToggle(text, default, callback)
+        callback = callback or function() end
+        local state = default or false
+
+        local ToggleFrame = Instance.new("Frame")
+        ToggleFrame.Size = UDim2.new(1, 0, 0, 32)
+        ToggleFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+        ToggleFrame.Parent = Container
+
+        local ToggleCorner = Instance.new("UICorner")
+        ToggleCorner.CornerRadius = UDim.new(0, 6)
+        ToggleCorner.Parent = ToggleFrame
+
+        local ToggleGradient = Instance.new("UIGradient")
+        ToggleGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(28, 28, 35)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 12))
+        })
+        ToggleGradient.Rotation = 90
+        ToggleGradient.Parent = ToggleFrame
+
+        local ToggleStroke = Instance.new("UIStroke")
+        ToggleStroke.Color = Color3.fromRGB(255, 255, 255)
+        ToggleStroke.Thickness = 1
+        ToggleStroke.Transparency = 0.9
+        ToggleStroke.Parent = ToggleFrame
+
+        local Label = Instance.new("TextLabel")
+        Label.Size = UDim2.new(1, -45, 1, 0)
+        Label.Position = UDim2.new(0, 10, 0, 0)
+        Label.BackgroundTransparency = 1
+        Label.Text = text
+        Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Label.TextSize = 12
+        Label.Font = Enum.Font.GothamMedium
+        Label.TextXAlignment = Enum.TextXAlignment.Left
+        Label.Parent = ToggleFrame
+
+        local Box = Instance.new("Frame")
+        Box.Size = UDim2.new(0, 18, 0, 18)
+        Box.Position = UDim2.new(1, -26, 0.5, -9)
+        Box.BackgroundColor3 = state and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(35, 35, 40)
+        Box.Parent = ToggleFrame
+
+        local BoxCorner = Instance.new("UICorner")
+        BoxCorner.CornerRadius = UDim.new(0, 4)
+        BoxCorner.Parent = Box
+
+        local InnerDot = Instance.new("Frame")
+        InnerDot.Size = UDim2.new(0, 8, 0, 8)
+        InnerDot.Position = UDim2.new(0.5, -4, 0.5, -4)
+        InnerDot.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        InnerDot.BackgroundTransparency = state and 0 or 1
+        InnerDot.Parent = Box
+
+        local DotCorner = Instance.new("UICorner")
+        DotCorner.CornerRadius = UDim.new(1, 0)
+        DotCorner.Parent = InnerDot
+
+        local ClickBtn = Instance.new("TextButton")
+        ClickBtn.Size = UDim2.new(1, 0, 1, 0)
+        ClickBtn.BackgroundTransparency = 1
+        ClickBtn.Text = ""
+        ClickBtn.Parent = ToggleFrame
+
+        ClickBtn.MouseButton1Click:Connect(function()
+            state = not state
+
+            -- Animasi Switch
+            TweenService:Create(Box, TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+                BackgroundColor3 = state and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(35, 35, 40)
+            }):Play()
+            TweenService:Create(InnerDot, TweenInfo.new(0.2), {
+                BackgroundTransparency = state and 0 or 1
+            }):Play()
+
+            task.spawn(callback, state)
         end)
     end
 
