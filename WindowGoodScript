@@ -72,8 +72,7 @@ local Fonts = {
     ["Source Sans"]      = Enum.Font.SourceSans,
     ["Montserrat"]      = Enum.Font.Montserrat,
     ["Permanent Marker"] = Enum.Font.PermanentMarker,
-    ["SciFi"]            = Enum.Font.SciFi,
-    ["Ubuntu"]           = Enum.Font.Ubuntu
+    ["SciFi"]            = Enum.Font.SciFi
 }
 
 local function getIconId(icon)
