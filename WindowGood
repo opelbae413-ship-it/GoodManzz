@@ -1,31 +1,42 @@
 local Library = {}
 
--- Preset Icon Registry (Lebih dari 20 Icon)
+-- Preset Icon Registry (34+ Preset Icon)
 Library.Icons = {
-    ["Logo"]     = "rbxassetid://107391174248131",
-    ["Settings"] = "rbxassetid://10734983868",
-    ["Gear"]     = "rbxassetid://10734983868",
-    ["Star"]     = "rbxassetid://10734982136",
-    ["Home"]     = "rbxassetid://10723415903",
-    ["User"]     = "rbxassetid://10709772834",
-    ["Bell"]     = "rbxassetid://10723380028",
-    ["Check"]    = "rbxassetid://10709790644",
-    ["Cross"]    = "rbxassetid://10709790258",
-    ["Info"]     = "rbxassetid://10723415903",
-    ["Warning"]  = "rbxassetid://10734983020",
-    ["Error"]    = "rbxassetid://10709790258",
-    ["Lock"]     = "rbxassetid://10734982602",
-    ["Shield"]   = "rbxassetid://10734982136",
-    ["Search"]   = "rbxassetid://10734981750",
-    ["Refresh"]  = "rbxassetid://10734981320",
-    ["Trash"]    = "rbxassetid://10734980890",
-    ["Edit"]     = "rbxassetid://10734980420",
-    ["Play"]     = "rbxassetid://10734979950",
-    ["Pause"]    = "rbxassetid://10734979480",
-    ["Code"]     = "rbxassetid://10734979010",
-    ["Crown"]    = "rbxassetid://10734978540",
-    ["Click"]    = "rbxassetid://10734978000",
-    ["Sword"]    = "rbxassetid://10723344320"
+    ["Logo"]        = "rbxassetid://107391174248131",
+    ["Settings"]    = "rbxassetid://10734983868",
+    ["Gear"]        = "rbxassetid://10734983868",
+    ["Star"]        = "rbxassetid://10734982136",
+    ["Home"]        = "rbxassetid://10723415903",
+    ["User"]        = "rbxassetid://10709772834",
+    ["Bell"]        = "rbxassetid://10723380028",
+    ["Check"]       = "rbxassetid://10709790644",
+    ["Cross"]       = "rbxassetid://10709790258",
+    ["Info"]        = "rbxassetid://10723415903",
+    ["Warning"]     = "rbxassetid://10734983020",
+    ["Error"]       = "rbxassetid://10709790258",
+    ["Lock"]        = "rbxassetid://10734982602",
+    ["Shield"]      = "rbxassetid://10734982136",
+    ["Search"]      = "rbxassetid://10734981750",
+    ["Refresh"]     = "rbxassetid://10734981320",
+    ["Trash"]       = "rbxassetid://10734980890",
+    ["Edit"]        = "rbxassetid://10734980420",
+    ["Play"]        = "rbxassetid://10734979950",
+    ["Pause"]       = "rbxassetid://10734979480",
+    ["Code"]        = "rbxassetid://10734979010",
+    ["Crown"]       = "rbxassetid://10734978540",
+    ["Click"]       = "rbxassetid://10734978000",
+    ["Sword"]       = "rbxassetid://10723344320",
+    -- 10 Preset Logo Baru:
+    ["Heart"]       = "rbxassetid://10709783884",
+    ["Trophy"]      = "rbxassetid://10709789912",
+    ["Fire"]        = "rbxassetid://10709783100",
+    ["Zap"]         = "rbxassetid://10709782500",
+    ["Target"]      = "rbxassetid://10709781800",
+    ["Compass"]     = "rbxassetid://10709781200",
+    ["Gift"]        = "rbxassetid://10709780600",
+    ["Bookmark"]    = "rbxassetid://10709780000",
+    ["Key"]         = "rbxassetid://10709779400",
+    ["Eye"]         = "rbxassetid://10709778800"
 }
 
 local function getIconId(icon)
@@ -56,6 +67,11 @@ elseif CoreGui:FindFirstChild("RobloxGui") then
     TargetParent = CoreGui
 else
     TargetParent = Players.LocalPlayer:WaitForChild("PlayerGui")
+end
+
+-- Auto Cleanup UI Lama
+if TargetParent:FindFirstChild("DarkGradientLibrary") then
+    TargetParent:FindFirstChild("DarkGradientLibrary"):Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -117,10 +133,6 @@ function Library:Notify(options)
     SideBar.BorderSizePixel = 0
     SideBar.BackgroundTransparency = 1
     SideBar.Parent = Card
-
-    local SideCorner = Instance.new("UICorner")
-    SideCorner.CornerRadius = UDim.new(0, 2)
-    SideCorner.Parent = SideBar
 
     local TitleLbl = Instance.new("TextLabel")
     TitleLbl.Size = UDim2.new(1, -25, 0, 18)
@@ -198,7 +210,7 @@ local function makeDraggable(frame, handle)
     end)
 end
 
--- ANIMASI EXECUTE (RAYFIELD STYLE + FLASHBANG 2 DETIK)
+-- ANIMASI EXECUTE (FLASHBANG 4 DETIK)
 local function playRayfieldExecution(title, author, onComplete)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(0, 240, 0, 70)
@@ -216,7 +228,6 @@ local function playRayfieldExecution(title, author, onComplete)
     Stroke.Transparency = 0.85
     Stroke.Parent = Card
 
-    -- Spinner Ring
     local Spinner = Instance.new("Frame")
     Spinner.Size = UDim2.new(0, 38, 0, 38)
     Spinner.Position = UDim2.new(0, 15, 0.5, -19)
@@ -240,7 +251,6 @@ local function playRayfieldExecution(title, author, onComplete)
     })
     RingGradient.Parent = RingStroke
 
-    -- Info Text
     local TitleLbl = Instance.new("TextLabel")
     TitleLbl.Size = UDim2.new(1, -70, 0, 20)
     TitleLbl.Position = UDim2.new(0, 62, 0, 16)
@@ -263,8 +273,7 @@ local function playRayfieldExecution(title, author, onComplete)
     AuthorLbl.TextXAlignment = Enum.TextXAlignment.Left
     AuthorLbl.Parent = Card
 
-    -- Putaran Spinner (4-5 Detik)
-    local duration = 4.5
+    local duration = 3.5
     local elapsed = 0
     local rotation = 0
 
@@ -280,7 +289,7 @@ local function playRayfieldExecution(title, author, onComplete)
             conn:Disconnect()
             Card:Destroy()
 
-            -- FLASHBANG 2 DETIK
+            -- FLASHBANG 4 DETIK
             local Flash = Instance.new("Frame")
             Flash.Size = UDim2.new(1, 0, 1, 0)
             Flash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -288,8 +297,7 @@ local function playRayfieldExecution(title, author, onComplete)
             Flash.ZIndex = 999
             Flash.Parent = ScreenGui
 
-            -- Fade out selama 2 detik
-            local flashTween = TweenService:Create(Flash, TweenInfo.new(2.0, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            local flashTween = TweenService:Create(Flash, TweenInfo.new(4.0, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
                 BackgroundTransparency = 1
             })
             flashTween:Play()
@@ -346,10 +354,8 @@ function Library:CreateWindow(config)
 
     makeDraggable(Main, Header)
 
-    -- Header Icon
-    local HeaderIcon
     if mainLogo then
-        HeaderIcon = Instance.new("ImageLabel")
+        local HeaderIcon = Instance.new("ImageLabel")
         HeaderIcon.Size = UDim2.new(0, 18, 0, 18)
         HeaderIcon.Position = UDim2.new(0, 10, 0, 9)
         HeaderIcon.BackgroundTransparency = 1
@@ -358,7 +364,7 @@ function Library:CreateWindow(config)
     end
 
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, mainLogo and -75 or -65, 1, 0)
+    Title.Size = UDim2.new(1, mainLogo and -100 or -90, 1, 0)
     Title.Position = UDim2.new(0, mainLogo and 34 or 12, 0, 0)
     Title.BackgroundTransparency = 1
     Title.Text = titleText
@@ -368,19 +374,25 @@ function Library:CreateWindow(config)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Header
 
+    -- TOMBOL-TOMBOL HEADER (- | ❐ | ✕)
     local MinBtn = Instance.new("TextButton")
     MinBtn.Size = UDim2.new(0, 22, 0, 22)
-    MinBtn.Position = UDim2.new(1, -50, 0, 7)
+    MinBtn.Position = UDim2.new(1, -75, 0, 7)
     MinBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     MinBtn.Text = "-"
     MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     MinBtn.TextSize = 13
     MinBtn.Font = Enum.Font.GothamBold
     MinBtn.Parent = Header
+    Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
 
-    local MinCorner = Instance.new("UICorner")
-    MinCorner.CornerRadius = UDim.new(0, 6)
-    MinCorner.Parent = MinBtn
+    local HideBtn = Instance.new("ImageButton")
+    HideBtn.Size = UDim2.new(0, 22, 0, 22)
+    HideBtn.Position = UDim2.new(1, -50, 0, 7)
+    HideBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    HideBtn.Image = mainLogo or Library.Icons["Logo"]
+    HideBtn.Parent = Header
+    Instance.new("UICorner", HideBtn).CornerRadius = UDim.new(0, 6)
 
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 22, 0, 22)
@@ -391,10 +403,7 @@ function Library:CreateWindow(config)
     CloseBtn.TextSize = 10
     CloseBtn.Font = Enum.Font.GothamBold
     CloseBtn.Parent = Header
-
-    local CloseCorner = Instance.new("UICorner")
-    CloseCorner.CornerRadius = UDim.new(0, 6)
-    CloseCorner.Parent = CloseBtn
+    Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 
     local Container = Instance.new("ScrollingFrame")
     Container.Size = UDim2.new(1, -16, 1, -44)
@@ -414,34 +423,35 @@ function Library:CreateWindow(config)
         Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 8)
     end)
 
-    -- TOMBOL KOTAK KECIL DENGAN LOGO (OPEN/HIDE TOGGLE)
-    local ToggleLogoBtn = Instance.new("ImageButton")
-    ToggleLogoBtn.Name = "ToggleLogoBtn"
-    ToggleLogoBtn.Size = UDim2.new(0, 38, 0, 38)
-    ToggleLogoBtn.Position = UDim2.new(0, 15, 0.3, 0)
-    ToggleLogoBtn.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
-    ToggleLogoBtn.Image = mainLogo or Library.Icons["Logo"]
-    ToggleLogoBtn.Parent = ScreenGui
+    -- TOMBOL KOTAK DRAGGABLE SAAT HIDE
+    local FloatingLogoBtn = Instance.new("ImageButton")
+    FloatingLogoBtn.Name = "FloatingLogoBtn"
+    FloatingLogoBtn.Size = UDim2.new(0, 42, 0, 42)
+    FloatingLogoBtn.Position = UDim2.new(0, 15, 0.3, 0)
+    FloatingLogoBtn.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
+    FloatingLogoBtn.Image = mainLogo or Library.Icons["Logo"]
+    FloatingLogoBtn.Visible = false
+    FloatingLogoBtn.Parent = ScreenGui
 
-    local ToggleCorner = Instance.new("UICorner")
-    ToggleCorner.CornerRadius = UDim.new(0, 8)
-    ToggleCorner.Parent = ToggleLogoBtn
+    Instance.new("UICorner", FloatingLogoBtn).CornerRadius = UDim.new(0, 8)
+    local FloatStroke = Instance.new("UIStroke", FloatingLogoBtn)
+    FloatStroke.Color = Color3.fromRGB(255, 255, 255)
+    FloatStroke.Transparency = 0.8
 
-    local ToggleStroke = Instance.new("UIStroke")
-    ToggleStroke.Color = Color3.fromRGB(255, 255, 255)
-    ToggleStroke.Thickness = 1
-    ToggleStroke.Transparency = 0.8
-    ToggleStroke.Parent = ToggleLogoBtn
+    makeDraggable(FloatingLogoBtn)
 
-    makeDraggable(ToggleLogoBtn)
-
-    local isWindowVisible = true
-    ToggleLogoBtn.MouseButton1Click:Connect(function()
-        isWindowVisible = not isWindowVisible
-        Main.Visible = isWindowVisible
+    -- AKSI HIDE / SHOW UI
+    HideBtn.MouseButton1Click:Connect(function()
+        Main.Visible = false
+        FloatingLogoBtn.Visible = true
     end)
 
-    -- Jalankan animasi Rayfield + Flashbang
+    FloatingLogoBtn.MouseButton1Click:Connect(function()
+        Main.Visible = true
+        FloatingLogoBtn.Visible = false
+    end)
+
+    -- EXECUTE ANIMATION
     playRayfieldExecution(titleText, authorText, function()
         TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
             Size = UDim2.new(0, 240, 0, 270)
@@ -455,6 +465,7 @@ function Library:CreateWindow(config)
         })
     end)
 
+    -- MINIMIZE & CLOSE LOGIC
     local isMinimized = false
     MinBtn.MouseButton1Click:Connect(function()
         isMinimized = not isMinimized
@@ -474,7 +485,7 @@ function Library:CreateWindow(config)
         end)
     end)
 
-    -- ADD BUTTON DENGAN SUPPORT ICON
+    -- ADD BUTTON
     function Window:AddButton(text, icon, callback)
         if type(icon) == "function" then
             callback = icon
@@ -489,15 +500,10 @@ function Library:CreateWindow(config)
         Btn.Text = ""
         Btn.Parent = Container
 
-        local BtnCorner = Instance.new("UICorner")
-        BtnCorner.CornerRadius = UDim.new(0, 6)
-        BtnCorner.Parent = Btn
-
-        local BtnStroke = Instance.new("UIStroke")
+        Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+        local BtnStroke = Instance.new("UIStroke", Btn)
         BtnStroke.Color = Color3.fromRGB(255, 255, 255)
-        BtnStroke.Thickness = 1
         BtnStroke.Transparency = 0.9
-        BtnStroke.Parent = Btn
 
         local xOffset = 10
         if iconId then
@@ -529,7 +535,7 @@ function Library:CreateWindow(config)
         end)
     end
 
-    -- ADD TOGGLE DENGAN SUPPORT ICON
+    -- ADD TOGGLE
     function Window:AddToggle(text, icon, default, callback)
         if type(icon) == "boolean" then
             callback = default
@@ -545,15 +551,10 @@ function Library:CreateWindow(config)
         ToggleFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
         ToggleFrame.Parent = Container
 
-        local ToggleCorner = Instance.new("UICorner")
-        ToggleCorner.CornerRadius = UDim.new(0, 6)
-        ToggleCorner.Parent = ToggleFrame
-
-        local ToggleStroke = Instance.new("UIStroke")
+        Instance.new("UICorner", ToggleFrame).CornerRadius = UDim.new(0, 6)
+        local ToggleStroke = Instance.new("UIStroke", ToggleFrame)
         ToggleStroke.Color = Color3.fromRGB(255, 255, 255)
-        ToggleStroke.Thickness = 1
         ToggleStroke.Transparency = 0.9
-        ToggleStroke.Parent = ToggleFrame
 
         local xOffset = 10
         if iconId then
@@ -583,9 +584,7 @@ function Library:CreateWindow(config)
         Box.BackgroundColor3 = state and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(35, 35, 40)
         Box.Parent = ToggleFrame
 
-        local BoxCorner = Instance.new("UICorner")
-        BoxCorner.CornerRadius = UDim.new(0, 4)
-        BoxCorner.Parent = Box
+        Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 4)
 
         local InnerDot = Instance.new("Frame")
         InnerDot.Size = UDim2.new(0, 8, 0, 8)
@@ -593,10 +592,7 @@ function Library:CreateWindow(config)
         InnerDot.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         InnerDot.BackgroundTransparency = state and 0 or 1
         InnerDot.Parent = Box
-
-        local DotCorner = Instance.new("UICorner")
-        DotCorner.CornerRadius = UDim.new(1, 0)
-        DotCorner.Parent = InnerDot
+        Instance.new("UICorner", InnerDot).CornerRadius = UDim.new(1, 0)
 
         local ClickBtn = Instance.new("TextButton")
         ClickBtn.Size = UDim2.new(1, 0, 1, 0)
@@ -615,9 +611,6 @@ function Library:CreateWindow(config)
             task.spawn(callback, state)
         end)
     end
-
-    return Window
-end
 
     -- ADD SLIDER
     function Window:AddSlider(text, icon, min, max, default, callback)
@@ -639,15 +632,10 @@ end
         SliderFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
         SliderFrame.Parent = Container
 
-        local SliderCorner = Instance.new("UICorner")
-        SliderCorner.CornerRadius = UDim.new(0, 6)
-        SliderCorner.Parent = SliderFrame
-
-        local SliderStroke = Instance.new("UIStroke")
+        Instance.new("UICorner", SliderFrame).CornerRadius = UDim.new(0, 6)
+        local SliderStroke = Instance.new("UIStroke", SliderFrame)
         SliderStroke.Color = Color3.fromRGB(255, 255, 255)
-        SliderStroke.Thickness = 1
         SliderStroke.Transparency = 0.9
-        SliderStroke.Parent = SliderFrame
 
         local xOffset = 10
         if iconId then
@@ -687,19 +675,13 @@ end
         SliderBar.Position = UDim2.new(0, 10, 0, 28)
         SliderBar.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
         SliderBar.Parent = SliderFrame
-
-        local BarCorner = Instance.new("UICorner")
-        BarCorner.CornerRadius = UDim.new(1, 0)
-        BarCorner.Parent = SliderBar
+        Instance.new("UICorner", SliderBar).CornerRadius = UDim.new(1, 0)
 
         local Fill = Instance.new("Frame")
         Fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
         Fill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Fill.Parent = SliderBar
-
-        local FillCorner = Instance.new("UICorner")
-        FillCorner.CornerRadius = UDim.new(1, 0)
-        FillCorner.Parent = Fill
+        Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
 
         local isDragging = false
 
@@ -730,5 +712,8 @@ end
             end
         end)
     end
+
+    return Window
+end
 
 return Library
