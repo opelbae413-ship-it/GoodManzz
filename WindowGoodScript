@@ -1,4 +1,4 @@
-Local Library = {}
+local Library = {}
 
 -- Preset Icon Registry
 Library.Icons = {
