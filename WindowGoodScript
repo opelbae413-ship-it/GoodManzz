@@ -54,7 +54,6 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
--- Parent GUI Failsafe (Delta / Mobile Executor)
 local TargetParent
 pcall(function()
     if gethui then
@@ -73,7 +72,6 @@ if not TargetParent then
     TargetParent = Players.LocalPlayer:WaitForChild("PlayerGui")
 end
 
--- Auto Cleanup UI Lama
 if TargetParent:FindFirstChild("DarkGradientLibrary") then
     TargetParent:FindFirstChild("DarkGradientLibrary"):Destroy()
 end
@@ -83,7 +81,6 @@ ScreenGui.Name = "DarkGradientLibrary"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = TargetParent
 
--- Notif Holder
 local NotifHolder = Instance.new("Frame")
 NotifHolder.Name = "NotifHolder"
 NotifHolder.Size = UDim2.new(0, 230, 1, -20)
@@ -120,9 +117,7 @@ function Library:Notify(options)
     Card.ClipsDescendants = true
     Card.Parent = NotifHolder
 
-    local CardCorner = Instance.new("UICorner")
-    CardCorner.CornerRadius = UDim.new(0, 8)
-    CardCorner.Parent = Card
+    Instance.new("UICorner", Card).CornerRadius = UDim.new(0, 8)
 
     local CardStroke = Instance.new("UIStroke")
     CardStroke.Color = sideColor
@@ -320,7 +315,7 @@ local function createToggle(parent, text, icon, default, callback)
     InnerDot.Position = UDim2.new(0.5, -4, 0.5, -4)
     InnerDot.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     InnerDot.BackgroundTransparency = state and 0 or 1
-    InnerDot.Parent = ToggleFrame
+    InnerDot.Parent = Box
     Instance.new("UICorner", InnerDot).CornerRadius = UDim.new(1, 0)
 
     local ClickBtn = Instance.new("TextButton")
@@ -443,7 +438,7 @@ local function createSlider(parent, text, icon, min, max, default, callback)
     return SliderFrame
 end
 
--- ANIMASI EXECUTE SAFE
+-- ANIMASI EXECUTE
 local function playRayfieldExecution(title, author, onComplete)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(0, 240, 0, 70)
@@ -452,9 +447,7 @@ local function playRayfieldExecution(title, author, onComplete)
     Card.BorderSizePixel = 0
     Card.Parent = ScreenGui
 
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 10)
-    Corner.Parent = Card
+    Instance.new("UICorner", Card).CornerRadius = UDim.new(0, 10)
 
     local Stroke = Instance.new("UIStroke")
     Stroke.Color = Color3.fromRGB(255, 255, 255)
@@ -472,9 +465,7 @@ local function playRayfieldExecution(title, author, onComplete)
     RingStroke.Color = Color3.fromRGB(255, 255, 255)
     RingStroke.Parent = Spinner
 
-    local RingCorner = Instance.new("UICorner")
-    RingCorner.CornerRadius = UDim.new(1, 0)
-    RingCorner.Parent = Spinner
+    Instance.new("UICorner", Spinner).CornerRadius = UDim.new(1, 0)
 
     local RingGradient = Instance.new("UIGradient")
     RingGradient.Color = ColorSequence.new({
@@ -488,7 +479,7 @@ local function playRayfieldExecution(title, author, onComplete)
     TitleLbl.Size = UDim2.new(1, -70, 0, 20)
     TitleLbl.Position = UDim2.new(0, 62, 0, 16)
     TitleLbl.BackgroundTransparency = 1
-    TitleLbl.Text = title or "GoodManzz Hub"
+    TitleLbl.Text = title or "GoodManzz"
     TitleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLbl.Font = Enum.Font.GothamBold
     TitleLbl.TextSize = 13
@@ -506,7 +497,7 @@ local function playRayfieldExecution(title, author, onComplete)
     AuthorLbl.TextXAlignment = Enum.TextXAlignment.Left
     AuthorLbl.Parent = Card
 
-    local duration = 2.5
+    local duration = 3.0
     local elapsed = 0
     local rotation = 0
 
@@ -529,7 +520,7 @@ local function playRayfieldExecution(title, author, onComplete)
             Flash.ZIndex = 999
             Flash.Parent = ScreenGui
 
-            local flashTween = TweenService:Create(Flash, TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            local flashTween = TweenService:Create(Flash, TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
                 BackgroundTransparency = 1
             })
             flashTween:Play()
@@ -560,9 +551,7 @@ function Library:CreateWindow(config)
     Main.ClipsDescendants = true
     Main.Parent = ScreenGui
 
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 10)
-    Corner.Parent = Main
+    Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 
     local MainGradient = Instance.new("UIGradient")
     MainGradient.Color = ColorSequence.new({
@@ -606,7 +595,6 @@ function Library:CreateWindow(config)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Header
 
-    -- TOMBOL HEADER (- | ❐ | ✕)
     local MinBtn = Instance.new("TextButton")
     MinBtn.Size = UDim2.new(0, 22, 0, 22)
     MinBtn.Position = UDim2.new(1, -75, 0, 7)
@@ -713,7 +701,6 @@ function Library:CreateWindow(config)
         end)
     end)
 
-    -- STANDALONE FITUR
     function Window:AddButton(text, icon, callback)
         return createButton(Container, text, icon, callback)
     end
@@ -726,7 +713,7 @@ function Library:CreateWindow(config)
         return createSlider(Container, text, icon, min, max, default, callback)
     end
 
-    -- PEMBUNGKUS FITUR / GROUP (ACCORDION SECTION)
+    -- PERBAIKAN UTAMA DI FUNGSI PEMBUNGKUS (AddGroup)
     function Window:AddGroup(groupName, icon, defaultCollapsed)
         if type(icon) == "boolean" then
             defaultCollapsed = icon
@@ -792,7 +779,7 @@ function Library:CreateWindow(config)
         ContentHolder.Size = UDim2.new(1, -12, 0, 0)
         ContentHolder.Position = UDim2.new(0, 6, 0, 34)
         ContentHolder.BackgroundTransparency = 1
-        ContentHolder.ClipsDescendants = true
+        ContentHolder.ClipsDescendants = false
         ContentHolder.Parent = GroupFrame
 
         local ContentLayout = Instance.new("UIListLayout")
@@ -802,6 +789,7 @@ function Library:CreateWindow(config)
 
         local function updateGroupSize()
             local contentHeight = ContentLayout.AbsoluteContentSize.Y
+            ContentHolder.Size = UDim2.new(1, -12, 0, contentHeight)
             local targetHeight = isCollapsed and 32 or (34 + contentHeight + 6)
             
             TweenService:Create(GroupFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
@@ -821,19 +809,19 @@ function Library:CreateWindow(config)
 
         function Group:AddButton(text, icon, callback)
             local btn = createButton(ContentHolder, text, icon, callback)
-            updateGroupSize()
+            task.defer(updateGroupSize)
             return btn
         end
 
         function Group:AddToggle(text, icon, default, callback)
             local tog = createToggle(ContentHolder, text, icon, default, callback)
-            updateGroupSize()
+            task.defer(updateGroupSize)
             return tog
         end
 
         function Group:AddSlider(text, icon, min, max, default, callback)
             local sld = createSlider(ContentHolder, text, icon, min, max, default, callback)
-            updateGroupSize()
+            task.defer(updateGroupSize)
             return sld
         end
 
