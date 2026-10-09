@@ -619,4 +619,116 @@ function Library:CreateWindow(config)
     return Window
 end
 
+    -- ADD SLIDER
+    function Window:AddSlider(text, icon, min, max, default, callback)
+        if type(icon) == "number" then
+            callback = default
+            default = max
+            max = min
+            min = icon
+            icon = nil
+        end
+        callback = callback or function() end
+        min = min or 1
+        max = max or 10
+        default = math.clamp(default or min, min, max)
+        local iconId = getIconId(icon)
+
+        local SliderFrame = Instance.new("Frame")
+        SliderFrame.Size = UDim2.new(1, 0, 0, 42)
+        SliderFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+        SliderFrame.Parent = Container
+
+        local SliderCorner = Instance.new("UICorner")
+        SliderCorner.CornerRadius = UDim.new(0, 6)
+        SliderCorner.Parent = SliderFrame
+
+        local SliderStroke = Instance.new("UIStroke")
+        SliderStroke.Color = Color3.fromRGB(255, 255, 255)
+        SliderStroke.Thickness = 1
+        SliderStroke.Transparency = 0.9
+        SliderStroke.Parent = SliderFrame
+
+        local xOffset = 10
+        if iconId then
+            local SldIcon = Instance.new("ImageLabel")
+            SldIcon.Size = UDim2.new(0, 16, 0, 16)
+            SldIcon.Position = UDim2.new(0, 10, 0, 7)
+            SldIcon.BackgroundTransparency = 1
+            SldIcon.Image = iconId
+            SldIcon.Parent = SliderFrame
+            xOffset = 32
+        end
+
+        local Label = Instance.new("TextLabel")
+        Label.Size = UDim2.new(1, -(xOffset + 45), 0, 18)
+        Label.Position = UDim2.new(0, xOffset, 0, 4)
+        Label.BackgroundTransparency = 1
+        Label.Text = text
+        Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Label.TextSize = 12
+        Label.Font = Enum.Font.GothamMedium
+        Label.TextXAlignment = Enum.TextXAlignment.Left
+        Label.Parent = SliderFrame
+
+        local ValueLabel = Instance.new("TextLabel")
+        ValueLabel.Size = UDim2.new(0, 35, 0, 18)
+        ValueLabel.Position = UDim2.new(1, -40, 0, 4)
+        ValueLabel.BackgroundTransparency = 1
+        ValueLabel.Text = tostring(default)
+        ValueLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+        ValueLabel.TextSize = 12
+        ValueLabel.Font = Enum.Font.GothamBold
+        ValueLabel.TextXAlignment = Enum.TextXAlignment.Right
+        ValueLabel.Parent = SliderFrame
+
+        local SliderBar = Instance.new("Frame")
+        SliderBar.Size = UDim2.new(1, -20, 0, 6)
+        SliderBar.Position = UDim2.new(0, 10, 0, 28)
+        SliderBar.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+        SliderBar.Parent = SliderFrame
+
+        local BarCorner = Instance.new("UICorner")
+        BarCorner.CornerRadius = UDim.new(1, 0)
+        BarCorner.Parent = SliderBar
+
+        local Fill = Instance.new("Frame")
+        Fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+        Fill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Fill.Parent = SliderBar
+
+        local FillCorner = Instance.new("UICorner")
+        FillCorner.CornerRadius = UDim.new(1, 0)
+        FillCorner.Parent = Fill
+
+        local isDragging = false
+
+        local function updateValue(input)
+            local pos = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
+            local value = math.floor(min + (max - min) * pos)
+            Fill.Size = UDim2.new((value - min) / (max - min), 0, 1, 0)
+            ValueLabel.Text = tostring(value)
+            task.spawn(callback, value)
+        end
+
+        SliderBar.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                isDragging = true
+                updateValue(input)
+            end
+        end)
+
+        UserInputService.InputChanged:Connect(function(input)
+            if isDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                updateValue(input)
+            end
+        end)
+
+        UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                isDragging = false
+            end
+        end)
+    end
+
 return Library
