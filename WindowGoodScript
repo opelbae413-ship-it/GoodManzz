@@ -38,9 +38,9 @@ Library.Icons = {
     ["Eye"]         = "rbxassetid://10709778800"
 }
 
--- 25 TEMA BACKGROUND (KHUSUS MERUBAH BACKGROUND GRADIENT)
+-- 25 TEMA BACKGROUND (TERMASUK TEMA AWAL)
 local Themes = {
-    ["Tema Awal"]       = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
+    ["Tema Awal"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
     ["Dark Gradient"]  = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
     ["Midnight Purple"]= ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 15, 55)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 8, 30)), ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 0, 10))}),
     ["Ocean Blue"]     = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 35, 60)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 18, 35)), ColorSequenceKeypoint.new(1, Color3.fromRGB(2, 5, 12))}),
@@ -60,7 +60,6 @@ local Themes = {
     ["Amber Gold"]     = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 48, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(32, 25, 8)), ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 8, 2))}),
     ["Monokai Dark"]   = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 40, 35)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 20, 18)), ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 8, 6))}),
     ["Pitch Black"]    = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(5, 5, 5)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
-    -- 5 TEMA BARU:
     ["Neon Matrix"]    = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 45, 10)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(4, 20, 4)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 5, 0))}),
     ["Amethyst Dusk"]  = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 20, 75)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(25, 8, 40)), ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 2, 15))}),
     ["Solar Flare"]    = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(75, 40, 10)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(40, 15, 4)), ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 2, 0))}),
@@ -68,24 +67,23 @@ local Themes = {
     ["Rose Gold"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(65, 35, 40)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(35, 18, 22)), ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 4, 6))})
 }
 
--- 15 GAYA TEXT / FONT (9 LAMA + 6 BARU)
+-- 15 GAYA TEXT / FONT YANG 100% AMAN DI ROBLOX EXECUTOR
 local Fonts = {
     ["Gotham Bold"]      = Enum.Font.GothamBold,
     ["Gotham"]           = Enum.Font.Gotham,
     ["Fredoka One"]      = Enum.Font.FredokaOne,
     ["Arcade"]           = Enum.Font.Arcade,
-    ["Roboto"]           = Enum.Font.Roboto,
+    ["Code"]             = Enum.Font.Code,
     ["Source Sans"]      = Enum.Font.SourceSans,
-    ["Montserrat"]       = Enum.Font.Montserrat,
-    ["Permanent Marker"] = Enum.Font.PermanentMarker,
     ["SciFi"]            = Enum.Font.SciFi,
-    -- 6 FONT BARU:
+    ["Antique"]          = Enum.Font.Antique,
+    ["Cartoon"]          = Enum.Font.Cartoon,
     ["Arial"]            = Enum.Font.Arial,
     ["Balthazar"]        = Enum.Font.Balthazar,
     ["Garamond"]         = Enum.Font.Garamond,
     ["Fondamento"]       = Enum.Font.Fondamento,
     ["Oswald"]           = Enum.Font.Oswald,
-    ["Indie Flower"]     = Enum.Font.IndieFlower
+    ["Special Elite"]    = Enum.Font.SpecialElite
 }
 
 local function getIconId(icon)
@@ -104,6 +102,13 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
+-- Pengecekan Failsafe Player (Anti-Crash)
+local LocalPlayer = Players.LocalPlayer
+if not LocalPlayer then
+    Players.PlayerAdded:Wait()
+    LocalPlayer = Players.LocalPlayer
+end
+
 local TargetParent
 pcall(function()
     if gethui then
@@ -119,7 +124,7 @@ pcall(function()
 end)
 
 if not TargetParent then
-    TargetParent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    TargetParent = LocalPlayer:WaitForChild("PlayerGui")
 end
 
 if TargetParent:FindFirstChild("DarkGradientLibrary") then
@@ -592,8 +597,9 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, onComplete)
     local elapsed = 0
     local rotation = 0
 
+    -- MENGGUNAKAN HEARTBEAT AGAR ANTI CRASH DI SEMUA EXECUTOR
     local conn
-    conn = RunService.RenderStepped:Connect(function(dt)
+    conn = RunService.Heartbeat:Connect(function(dt)
         elapsed = elapsed + dt
         local progress = math.clamp(elapsed / duration, 0, 1)
         
@@ -654,7 +660,7 @@ function Library:CreateWindow(config)
 
     -- GRADIENT BACKGROUND UTAMA
     local MainGradient = Instance.new("UIGradient")
-    MainGradient.Color = Themes["Dark Gradient"]
+    MainGradient.Color = Themes["Tema Awal"]
     MainGradient.Rotation = 135
     MainGradient.Parent = Main
 
@@ -703,7 +709,7 @@ function Library:CreateWindow(config)
     MinBtn.Parent = Header
     Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
 
-    -- TOMBOL PENGATURAN MENGGUNAKAN ICON LUCIDE SETTINGS BARU
+    -- TOMBOL PENGATURAN ICON SETTINGS
     local SettingsBtn = Instance.new("ImageButton")
     SettingsBtn.Size = UDim2.new(0, 22, 0, 22)
     SettingsBtn.Position = UDim2.new(1, -75, 0, 7)
@@ -903,7 +909,7 @@ function Library:CreateWindow(config)
     end
 
     -- KONTEN PANEL PENGATURAN
-    -- 1. GROUP TEMA BACKGROUND (24 TEMA - MERUBAH MAIN BACKGROUND HANYA)
+    -- 1. GROUP TEMA BACKGROUND (25 TEMA - MERUBAH MAIN BACKGROUND HANYA)
     local ThemeGroup = buildGroupInContainer(SettingsContainer, "Tema Background", "Settings", false)
     for themeName, colorSeq in pairs(Themes) do
         ThemeGroup:AddButton(themeName, "Star", function()
@@ -913,7 +919,7 @@ function Library:CreateWindow(config)
         end)
     end
 
-    -- 2. GROUP GAYA TEXT (15 FONT)
+    -- 2. GROUP GAYA TEXT (15 FONT ANTI CRASH)
     local FontGroup = buildGroupInContainer(SettingsContainer, "Gaya Text / Font", "Edit", false)
     for fontName, enumFont in pairs(Fonts) do
         FontGroup:AddButton(fontName, "Edit", function()
