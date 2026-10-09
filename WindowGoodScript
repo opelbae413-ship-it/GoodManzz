@@ -69,16 +69,7 @@ local Themes = {
 
 -- FONT AMAN DI EXECUTOR
 local Fonts = {
-    ["Gotham Bold"]      = Enum.Font.GothamBold,
-    ["Gotham"]           = Enum.Font.Gotham,
-    ["Fredoka One"]      = Enum.Font.FredokaOne,
-    ["Source Sans"]      = Enum.Font.SourceSans,
-    ["SourceSansBold"]   = Enum.Font.SourceSansBold,
-    ["Code"]             = Enum.Font.Code,
-    ["Arial"]            = Enum.Font.Arial,
-    ["Balthazar"]        = Enum.Font.Balthazar,
-    ["Garamond"]         = Enum.Font.Garamond,
-    ["Oswald"]           = Enum.Font.Oswald
+    ["Gotham"]           = Enum.Font.Gotham
 }
 
 local function getIconId(icon)
