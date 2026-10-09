@@ -405,7 +405,7 @@ local function createSlider(parent, text, icon, min, max, default, callback)
     end
     callback = callback or function() end
     min = min or 1
-    max = max or 10
+    max = max or 100
     default = math.clamp(default or min, min, max)
     local iconId = getIconId(icon)
 
@@ -501,7 +501,6 @@ end
 
 -- ESEKUSI ANIMASI SPINNER & FLASHBANG FULL WHITE (10 DETIK)
 local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onComplete)
-    -- Maksimal 8 huruf untuk flashbang text
     local targetFlashText = string.sub(tostring(flashText or "GOODMANZ"), 1, 8)
 
     local Card = Instance.new("Frame")
@@ -574,12 +573,13 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onCompl
         rotation = rotation + (speed * dt)
         RingGradient.Rotation = rotation % 360
 
-        -- Animasi titik (bertambah dari 1 sampai 4 titik lalu ulang ke 1)
+        -- Animasi titik (bertambah 1 - 4 titik lalu ulang ke 1)
         local dotCount = (math.floor(elapsed * 3) % 4) + 1
         local dots = string.rep(".", dotCount)
 
         if elapsed < 4.0 then
-            AuthorLbl.Text = txt1 .. " " .. dots
+            -- TEXT 1 HANYA "by:" / HANYA TXT1 TANPA TITIK
+            AuthorLbl.Text = txt1
         elseif elapsed < 7.0 then
             AuthorLbl.Text = txt2 .. " " .. dots
         else
@@ -605,7 +605,7 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onCompl
             BigText.BackgroundTransparency = 1
             BigText.Text = ""
             BigText.TextColor3 = Color3.fromRGB(15, 15, 15)
-            BigText.Font = Enum.Font.Ubuntu
+            BigText.Font = Enum.Font.PermanentMarker -- DENGAN FONT PERMANENT MARKER
             BigText.TextSize = 72
             BigText.TextWrapped = true
             BigText.ZIndex = 1000000
@@ -642,7 +642,7 @@ function Library:CreateWindow(config)
     local text1 = config.Text1 or ("by:" .. authorText)
     local text2 = config.Text2 or "Injeksi Game"
     local text3 = config.Text3 or "Menyiapkan Ui"
-    local flashText = config.FlashText or "GOODMANZ" -- Bisa diatur di CreateWindow config (Maksimal 8 huruf)
+    local flashText = config.FlashText or "GOODMANZ"
 
     local Window = {}
 
@@ -913,7 +913,13 @@ function Library:CreateWindow(config)
     end
 
     -- POPULASI FITUR DI SETTINGS PANEL
-    -- GROUP GAYA TEXT (10 FONT)
+    -- 1. GROUP TRANSPARANSI BACKGROUND (SLIDER 1 - 100)
+    local TransGroup = buildGroupInContainer(SettingsContainer, "Transparansi UI", "Settings", false)
+    TransGroup:AddSlider("Transparansi BG", "Eye", 1, 100, 1, function(val)
+        Main.BackgroundTransparency = val / 100
+    end)
+
+    -- 2. GROUP GAYA TEXT (10 FONT)
     local FontGroup = buildGroupInContainer(SettingsContainer, "Gaya Text / Font", "Edit", false)
     for fontName, enumFont in pairs(Fonts) do
         FontGroup:AddButton(fontName, "Edit", function()
