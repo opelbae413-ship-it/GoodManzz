@@ -499,7 +499,7 @@ local function createSlider(parent, text, icon, min, max, default, callback)
     return SliderFrame
 end
 
--- ESEKUSI ANIMASI SPINNER & FLASHBANG FULL WHITE (10 DETIK)
+-- ANIMASI SPINNER & FLASHBANG FULL WHITE (10 DETIK)
 local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onComplete)
     local targetFlashText = string.sub(tostring(flashText or "GOODMANZ"), 1, 8)
 
@@ -573,12 +573,10 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onCompl
         rotation = rotation + (speed * dt)
         RingGradient.Rotation = rotation % 360
 
-        -- Animasi titik (bertambah 1 - 4 titik lalu ulang ke 1)
         local dotCount = (math.floor(elapsed * 3) % 4) + 1
         local dots = string.rep(".", dotCount)
 
         if elapsed < 4.0 then
-            -- TEXT 1 HANYA "by:" / HANYA TXT1 TANPA TITIK
             AuthorLbl.Text = txt1
         elseif elapsed < 7.0 then
             AuthorLbl.Text = txt2 .. " " .. dots
@@ -590,7 +588,6 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onCompl
             conn:Disconnect()
             Card:Destroy()
 
-            -- FLASHBANG 10 DETIK FULL WHITE
             local Flash = Instance.new("Frame")
             Flash.Size = UDim2.new(1, 0, 1, 0)
             Flash.Position = UDim2.new(0, 0, 0, 0)
@@ -605,13 +602,12 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onCompl
             BigText.BackgroundTransparency = 1
             BigText.Text = ""
             BigText.TextColor3 = Color3.fromRGB(15, 15, 15)
-            BigText.Font = Enum.Font.PermanentMarker -- DENGAN FONT PERMANENT MARKER
+            BigText.Font = Enum.Font.PermanentMarker
             BigText.TextSize = 72
             BigText.TextWrapped = true
             BigText.ZIndex = 1000000
             BigText.Parent = Flash
 
-            -- Tulis huruf demi huruf (1 detik per huruf, maksimal 8 huruf)
             task.spawn(function()
                 for i = 1, #targetFlashText do
                     BigText.Text = string.sub(targetFlashText, 1, i)
@@ -619,7 +615,6 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onCompl
                 end
             end)
 
-            -- Setelah 10 detik, hilangkan flashbang
             task.delay(10.0, function()
                 local fadeTween = TweenService:Create(Flash, TweenInfo.new(0.5), {BackgroundTransparency = 1})
                 TweenService:Create(BigText, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
@@ -633,6 +628,177 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onCompl
     end)
 end
 
+-- SISTEM KEY UI
+local function showKeySystemUI(keySettings, onSuccess)
+    keySettings = keySettings or {}
+    local keyTitle = keySettings.Title or "Key System"
+    local keySubtitle = keySettings.Subtitle or "Masukkan Key untuk melanjutkan"
+    local keyNote = keySettings.Note or "Dapatkan key melalui link di bawah"
+    local keyLink = keySettings.KeyLink or ""
+    local validKeys = type(keySettings.Key) == "table" and keySettings.Key or {keySettings.Key or "GOODMANZKEY"}
+
+    local KeyFrame = Instance.new("Frame")
+    KeyFrame.Name = "KeyFrame"
+    KeyFrame.Size = UDim2.new(0, 280, 0, 190)
+    KeyFrame.Position = UDim2.new(0.5, -140, 0.5, -95)
+    KeyFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 18)
+    KeyFrame.BorderSizePixel = 0
+    KeyFrame.Parent = ScreenGui
+
+    Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 10)
+
+    local KeyStroke = Instance.new("UIStroke", KeyFrame)
+    KeyStroke.Color = Color3.fromRGB(255, 255, 255)
+    KeyStroke.Transparency = 0.85
+
+    makeDraggable(KeyFrame)
+
+    local HeaderTitle = Instance.new("TextLabel")
+    HeaderTitle.Size = UDim2.new(1, -20, 0, 24)
+    HeaderTitle.Position = UDim2.new(0, 10, 0, 10)
+    HeaderTitle.BackgroundTransparency = 1
+    HeaderTitle.Text = keyTitle
+    HeaderTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    HeaderTitle.TextSize = 14
+    HeaderTitle.Font = Enum.Font.GothamBold
+    HeaderTitle.TextXAlignment = Enum.TextXAlignment.Center
+    HeaderTitle.Parent = KeyFrame
+
+    local SubTitle = Instance.new("TextLabel")
+    SubTitle.Size = UDim2.new(1, -20, 0, 16)
+    SubTitle.Position = UDim2.new(0, 10, 0, 34)
+    SubTitle.BackgroundTransparency = 1
+    SubTitle.Text = keySubtitle
+    SubTitle.TextColor3 = Color3.fromRGB(160, 160, 170)
+    SubTitle.TextSize = 11
+    SubTitle.Font = Enum.Font.Gotham
+    SubTitle.TextXAlignment = Enum.TextXAlignment.Center
+    SubTitle.Parent = KeyFrame
+
+    local TextBoxFrame = Instance.new("Frame")
+    TextBoxFrame.Size = UDim2.new(1, -24, 0, 34)
+    TextBoxFrame.Position = UDim2.new(0, 12, 0, 58)
+    TextBoxFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
+    TextBoxFrame.Parent = KeyFrame
+
+    Instance.new("UICorner", TextBoxFrame).CornerRadius = UDim.new(0, 6)
+    local TextStroke = Instance.new("UIStroke", TextBoxFrame)
+    TextStroke.Color = Color3.fromRGB(255, 255, 255)
+    TextStroke.Transparency = 0.9
+
+    local KeyInput = Instance.new("TextBox")
+    KeyInput.Size = UDim2.new(1, -12, 1, 0)
+    KeyInput.Position = UDim2.new(0, 6, 0, 0)
+    KeyInput.BackgroundTransparency = 1
+    KeyInput.Text = ""
+    KeyInput.PlaceholderText = "Masukkan Key Di Sini..."
+    KeyInput.PlaceholderColor3 = Color3.fromRGB(100, 100, 110)
+    KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeyInput.TextSize = 12
+    KeyInput.Font = Enum.Font.Gotham
+    KeyInput.ClearTextOnFocus = false
+    KeyInput.Parent = TextBoxFrame
+
+    local SubmitBtn = Instance.new("TextButton")
+    SubmitBtn.Size = UDim2.new(keyLink ~= "" and 0.48 or 1, -12, 0, 32)
+    SubmitBtn.Position = UDim2.new(0, 12, 0, 100)
+    SubmitBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+    SubmitBtn.Text = "Submit Key"
+    SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SubmitBtn.TextSize = 12
+    SubmitBtn.Font = Enum.Font.GothamBold
+    SubmitBtn.Parent = KeyFrame
+    Instance.new("UICorner", SubmitBtn).CornerRadius = UDim.new(0, 6)
+
+    if keyLink ~= "" then
+        local GetKeyBtn = Instance.new("TextButton")
+        GetKeyBtn.Size = UDim2.new(0.48, -12, 0, 32)
+        GetKeyBtn.Position = UDim2.new(0.52, 6, 0, 100)
+        GetKeyBtn.BackgroundColor3 = Color3.fromRGB(52, 152, 219)
+        GetKeyBtn.Text = "Get Key (Copy)"
+        GetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        GetKeyBtn.TextSize = 11
+        GetKeyBtn.Font = Enum.Font.GothamBold
+        GetKeyBtn.Parent = KeyFrame
+        Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 6)
+
+        GetKeyBtn.MouseButton1Click:Connect(function()
+            if setclipboard then
+                setclipboard(keyLink)
+                Library:Notify({
+                    Title = "Key System",
+                    Content = "Link Key Berhasil Di-copy!",
+                    Type = "Info",
+                    Duration = 3
+                })
+            else
+                Library:Notify({
+                    Title = "Key System",
+                    Content = "Fitur setclipboard tidak didukung executor ini",
+                    Type = "Error",
+                    Duration = 3
+                })
+            end
+        end)
+    end
+
+    local NoteLbl = Instance.new("TextLabel")
+    NoteLbl.Size = UDim2.new(1, -20, 0, 20)
+    NoteLbl.Position = UDim2.new(0, 10, 0, 142)
+    NoteLbl.BackgroundTransparency = 1
+    NoteLbl.Text = keyNote
+    NoteLbl.TextColor3 = Color3.fromRGB(120, 120, 130)
+    NoteLbl.TextSize = 10
+    NoteLbl.Font = Enum.Font.Gotham
+    NoteLbl.TextXAlignment = Enum.TextXAlignment.Center
+    NoteLbl.TextWrapped = true
+    NoteLbl.Parent = KeyFrame
+
+    local function checkKey()
+        local entered = KeyInput.Text
+        local isValid = false
+
+        for _, k in ipairs(validKeys) do
+            if entered == tostring(k) then
+                isValid = true
+                break
+            end
+        end
+
+        if isValid then
+            Library:Notify({
+                Title = "Key System",
+                Content = "Key Benar! Menyiapkan UI...",
+                Type = "Success",
+                Duration = 2
+            })
+            
+            TweenService:Create(KeyFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {
+                Size = UDim2.new(0, 280, 0, 0),
+                BackgroundTransparency = 1
+            }):Play()
+
+            task.wait(0.35)
+            KeyFrame:Destroy()
+
+            if onSuccess then onSuccess() end
+        else
+            Library:Notify({
+                Title = "Key System",
+                Content = "Key Salah! Coba lagi.",
+                Type = "Error",
+                Duration = 3
+            })
+            TextStroke.Color = Color3.fromRGB(231, 76, 60)
+            task.delay(1.5, function()
+                TextStroke.Color = Color3.fromRGB(255, 255, 255)
+            end)
+        end
+    end
+
+    SubmitBtn.MouseButton1Click:Connect(checkKey)
+end
+
 function Library:CreateWindow(config)
     config = config or {}
     local titleText = config.Name or "Dark Hub"
@@ -641,8 +807,12 @@ function Library:CreateWindow(config)
 
     local text1 = config.Text1 or ("by:" .. authorText)
     local text2 = config.Text2 or "Injeksi Game"
-    local text3 = config.Text3 or "Menyiapkan Ui"
+    text3 = config.Text3 or "Menyiapkan Ui"
     local flashText = config.FlashText or "GOODMANZ"
+
+    -- SETTINGAN KEY SYSTEM
+    local keySystemEnabled = config.KeySystem or false
+    local keySettings = config.KeySettings or {}
 
     local Window = {}
 
@@ -989,19 +1159,28 @@ function Library:CreateWindow(config)
         FloatingLogoBtn.Visible = false
     end)
 
-    -- MEMANGGIL SPINNER & FLASHBANG
-    playRayfieldExecution(titleText, text1, text2, text3, flashText, function()
-        TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 240, 0, 270)
-        }):Play()
+    -- FUNGSI UNTUK MEMULAI EXECUTION (SPINNER & FLASHBANG)
+    local function startExecution()
+        playRayfieldExecution(titleText, text1, text2, text3, flashText, function()
+            TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 240, 0, 270)
+            }):Play()
 
-        Library:Notify({
-            Title = titleText,
-            Content = "Script Berhasil Di-execute!",
-            Type = "Success",
-            Duration = 3
-        })
-    end)
+            Library:Notify({
+                Title = titleText,
+                Content = "Script Berhasil Di-execute!",
+                Type = "Success",
+                Duration = 3
+            })
+        end)
+    end
+
+    -- KONDISI KEY SYSTEM
+    if keySystemEnabled then
+        showKeySystemUI(keySettings, startExecution)
+    else
+        startExecution()
+    end
 
     local isMinimized = false
     MinBtn.MouseButton1Click:Connect(function()
