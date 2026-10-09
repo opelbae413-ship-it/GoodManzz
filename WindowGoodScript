@@ -38,7 +38,7 @@ Library.Icons = {
     ["Eye"]         = "rbxassetid://10709778800"
 }
 
--- 25 TEMA BACKGROUND (TERMASUK TEMA AWAL)
+-- 25 TEMA BACKGROUND
 local Themes = {
     ["Tema Awal"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
     ["Dark Gradient"]  = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
@@ -67,23 +67,18 @@ local Themes = {
     ["Rose Gold"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(65, 35, 40)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(35, 18, 22)), ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 4, 6))})
 }
 
--- 15 GAYA TEXT / FONT YANG 100% AMAN DI ROBLOX EXECUTOR
+-- FONT AMAN DI EXECUTOR
 local Fonts = {
     ["Gotham Bold"]      = Enum.Font.GothamBold,
     ["Gotham"]           = Enum.Font.Gotham,
     ["Fredoka One"]      = Enum.Font.FredokaOne,
-    ["Arcade"]           = Enum.Font.Arcade,
-    ["Code"]             = Enum.Font.Code,
     ["Source Sans"]      = Enum.Font.SourceSans,
-    ["SciFi"]            = Enum.Font.SciFi,
-    ["Antique"]          = Enum.Font.Antique,
-    ["Cartoon"]          = Enum.Font.Cartoon,
+    ["SourceSansBold"]   = Enum.Font.SourceSansBold,
+    ["Code"]             = Enum.Font.Code,
     ["Arial"]            = Enum.Font.Arial,
     ["Balthazar"]        = Enum.Font.Balthazar,
     ["Garamond"]         = Enum.Font.Garamond,
-    ["Fondamento"]       = Enum.Font.Fondamento,
-    ["Oswald"]           = Enum.Font.Oswald,
-    ["Special Elite"]    = Enum.Font.SpecialElite
+    ["Oswald"]           = Enum.Font.Oswald
 }
 
 local function getIconId(icon)
@@ -102,7 +97,6 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
--- Pengecekan Failsafe Player (Anti-Crash)
 local LocalPlayer = Players.LocalPlayer
 if not LocalPlayer then
     Players.PlayerAdded:Wait()
@@ -597,7 +591,6 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, onComplete)
     local elapsed = 0
     local rotation = 0
 
-    -- MENGGUNAKAN HEARTBEAT AGAR ANTI CRASH DI SEMUA EXECUTOR
     local conn
     conn = RunService.Heartbeat:Connect(function(dt)
         elapsed = elapsed + dt
@@ -658,7 +651,6 @@ function Library:CreateWindow(config)
 
     Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 
-    -- GRADIENT BACKGROUND UTAMA
     local MainGradient = Instance.new("UIGradient")
     MainGradient.Color = Themes["Tema Awal"]
     MainGradient.Rotation = 135
@@ -697,7 +689,6 @@ function Library:CreateWindow(config)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Header
 
-    -- TOMBOL-TOMBOL HEADER (- | ⚙ | ❐ | ✕)
     local MinBtn = Instance.new("TextButton")
     MinBtn.Size = UDim2.new(0, 22, 0, 22)
     MinBtn.Position = UDim2.new(1, -100, 0, 7)
@@ -709,7 +700,6 @@ function Library:CreateWindow(config)
     MinBtn.Parent = Header
     Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
 
-    -- TOMBOL PENGATURAN ICON SETTINGS
     local SettingsBtn = Instance.new("ImageButton")
     SettingsBtn.Size = UDim2.new(0, 22, 0, 22)
     SettingsBtn.Position = UDim2.new(1, -75, 0, 7)
@@ -737,7 +727,6 @@ function Library:CreateWindow(config)
     CloseBtn.Parent = Header
     Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 
-    -- PANEL UTAMA
     local Container = Instance.new("ScrollingFrame")
     Container.Name = "MainContainer"
     Container.Size = UDim2.new(1, -16, 1, -44)
@@ -758,7 +747,6 @@ function Library:CreateWindow(config)
         Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 8)
     end)
 
-    -- PANEL PENGATURAN
     local SettingsContainer = Instance.new("ScrollingFrame")
     SettingsContainer.Name = "SettingsContainer"
     SettingsContainer.Size = UDim2.new(1, -16, 1, -44)
@@ -780,7 +768,6 @@ function Library:CreateWindow(config)
         SettingsContainer.CanvasSize = UDim2.new(0, 0, 0, SettingsLayout.AbsoluteContentSize.Y + 8)
     end)
 
-    -- LOGIKA SWITCH PANEL UTAMA <-> PENGATURAN
     local showingSettings = false
     SettingsBtn.MouseButton1Click:Connect(function()
         showingSettings = not showingSettings
@@ -792,7 +779,6 @@ function Library:CreateWindow(config)
         }):Play()
     end)
 
-    -- HELPER OPERASI GROUP DI DALAM CONTAINER
     local function buildGroupInContainer(parentContainer, groupName, icon, defaultCollapsed)
         if type(icon) == "boolean" then
             defaultCollapsed = icon
@@ -908,8 +894,6 @@ function Library:CreateWindow(config)
         return Group
     end
 
-    -- KONTEN PANEL PENGATURAN
-    -- 1. GROUP TEMA BACKGROUND (25 TEMA - MERUBAH MAIN BACKGROUND HANYA)
     local ThemeGroup = buildGroupInContainer(SettingsContainer, "Tema Background", "Settings", false)
     for themeName, colorSeq in pairs(Themes) do
         ThemeGroup:AddButton(themeName, "Star", function()
@@ -919,7 +903,6 @@ function Library:CreateWindow(config)
         end)
     end
 
-    -- 2. GROUP GAYA TEXT (15 FONT ANTI CRASH)
     local FontGroup = buildGroupInContainer(SettingsContainer, "Gaya Text / Font", "Edit", false)
     for fontName, enumFont in pairs(Fonts) do
         FontGroup:AddButton(fontName, "Edit", function()
@@ -931,7 +914,6 @@ function Library:CreateWindow(config)
         end)
     end
 
-    -- RESIZE GRIP HANDLE
     local ResizeGrip = Instance.new("Frame")
     ResizeGrip.Name = "ResizeGrip"
     ResizeGrip.Size = UDim2.new(0, 14, 0, 14)
