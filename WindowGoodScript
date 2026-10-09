@@ -38,30 +38,6 @@ Library.Icons = {
     ["Eye"]         = "rbxassetid://10709778800"
 }
 
--- 20 TEMA BACKGROUND
-local Themes = {
-    ["Dark Gradient"]   = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
-    ["Midnight Purple"] = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 15, 55)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 8, 30)), ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 0, 10))}),
-    ["Ocean Blue"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 35, 60)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 18, 35)), ColorSequenceKeypoint.new(1, Color3.fromRGB(2, 5, 12))}),
-    ["Emerald Green"]   = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 50, 30)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 25, 15)), ColorSequenceKeypoint.new(1, Color3.fromRGB(2, 8, 4))}),
-    ["Crimson Red"]     = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 15, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(30, 8, 8)), ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 0, 0))}),
-    ["Sunset Orange"]   = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 30, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(35, 15, 8)), ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 4, 0))}),
-    ["Cyberpunk Pink"]  = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 15, 45)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(30, 8, 25)), ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 0, 8))}),
-    ["Golden Luxury"]   = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(55, 45, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(30, 22, 8)), ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 7, 0))}),
-    ["Neon Cyan"]       = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 55, 60)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 28, 32)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 10, 12))}),
-    ["Deep Space"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 35)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(10, 10, 20)), ColorSequenceKeypoint.new(1, Color3.fromRGB(2, 2, 8))}),
-    ["Charcoal Gray"]   = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(45, 45, 45)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(25, 25, 25)), ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 8, 8))}),
-    ["Violet Dream"]    = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(45, 20, 60)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(22, 10, 32)), ColorSequenceKeypoint.new(1, Color3.fromRGB(6, 2, 10))}),
-    ["Toxic Lime"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(35, 55, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(18, 30, 8)), ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 10, 2))}),
-    ["Blood Moon"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 10, 20)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(35, 4, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 0, 3))}),
-    ["Sakura Pink"]     = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 35, 48)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(32, 18, 25)), ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 5, 8))}),
-    ["Ice Frost"]       = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 48, 60)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(12, 25, 32)), ColorSequenceKeypoint.new(1, Color3.fromRGB(4, 8, 12))}),
-    ["Amber Gold"]      = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 48, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(32, 25, 8)), ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 8, 2))}),
-    ["Monokai Dark"]    = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 40, 35)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 20, 18)), ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 8, 6))}),
-    ["Pitch Black"]     = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 15)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(5, 5, 5)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))}),
-    ["Cyber Matrix"]    = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 45, 20)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 20, 10)), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 5, 2))})
-}
-
 -- 10 GAYA TEXT / FONT
 local Fonts = {
     ["Gotham Bold"]      = Enum.Font.GothamBold,
@@ -523,7 +499,11 @@ local function createSlider(parent, text, icon, min, max, default, callback)
     return SliderFrame
 end
 
-local function playRayfieldExecution(title, txt1, txt2, txt3, onComplete)
+-- ESEKUSI ANIMASI SPINNER & FLASHBANG FULL WHITE (10 DETIK)
+local function playRayfieldExecution(title, txt1, txt2, txt3, flashText, onComplete)
+    -- Maksimal 8 huruf untuk flashbang text
+    local targetFlashText = string.sub(tostring(flashText or "GOODMANZ"), 1, 8)
+
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(0, 240, 0, 70)
     Card.Position = UDim2.new(0.5, -120, 0.5, -35)
@@ -594,18 +574,23 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, onComplete)
         rotation = rotation + (speed * dt)
         RingGradient.Rotation = rotation % 360
 
+        -- Animasi titik (bertambah dari 1 sampai 4 titik lalu ulang ke 1)
+        local dotCount = (math.floor(elapsed * 3) % 4) + 1
+        local dots = string.rep(".", dotCount)
+
         if elapsed < 4.0 then
-            AuthorLbl.Text = txt1
+            AuthorLbl.Text = txt1 .. " " .. dots
         elseif elapsed < 7.0 then
-            AuthorLbl.Text = txt2
+            AuthorLbl.Text = txt2 .. " " .. dots
         else
-            AuthorLbl.Text = txt3
+            AuthorLbl.Text = txt3 .. " " .. dots
         end
 
         if elapsed >= duration then
             conn:Disconnect()
             Card:Destroy()
 
+            -- FLASHBANG 10 DETIK FULL WHITE
             local Flash = Instance.new("Frame")
             Flash.Size = UDim2.new(1, 0, 1, 0)
             Flash.Position = UDim2.new(0, 0, 0, 0)
@@ -614,11 +599,35 @@ local function playRayfieldExecution(title, txt1, txt2, txt3, onComplete)
             Flash.ZIndex = 999999
             Flash.Parent = ScreenGui
 
-            task.delay(0.5, function()
-                TweenService:Create(Flash, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
-                task.wait(0.5)
-                Flash:Destroy()
-                if onComplete then onComplete() end
+            local BigText = Instance.new("TextLabel")
+            BigText.Size = UDim2.new(1, -40, 0, 120)
+            BigText.Position = UDim2.new(0, 20, 0.5, -60)
+            BigText.BackgroundTransparency = 1
+            BigText.Text = ""
+            BigText.TextColor3 = Color3.fromRGB(15, 15, 15)
+            BigText.Font = Enum.Font.Ubuntu
+            BigText.TextSize = 72
+            BigText.TextWrapped = true
+            BigText.ZIndex = 1000000
+            BigText.Parent = Flash
+
+            -- Tulis huruf demi huruf (1 detik per huruf, maksimal 8 huruf)
+            task.spawn(function()
+                for i = 1, #targetFlashText do
+                    BigText.Text = string.sub(targetFlashText, 1, i)
+                    task.wait(1)
+                end
+            end)
+
+            -- Setelah 10 detik, hilangkan flashbang
+            task.delay(10.0, function()
+                local fadeTween = TweenService:Create(Flash, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+                TweenService:Create(BigText, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
+                fadeTween:Play()
+                fadeTween.Completed:Connect(function()
+                    Flash:Destroy()
+                    if onComplete then onComplete() end
+                end)
             end)
         end
     end)
@@ -633,6 +642,7 @@ function Library:CreateWindow(config)
     local text1 = config.Text1 or ("by:" .. authorText)
     local text2 = config.Text2 or "Injeksi Game"
     local text3 = config.Text3 or "Menyiapkan Ui"
+    local flashText = config.FlashText or "GOODMANZ" -- Bisa diatur di CreateWindow config (Maksimal 8 huruf)
 
     local Window = {}
 
@@ -648,7 +658,11 @@ function Library:CreateWindow(config)
     Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 
     local MainGradient = Instance.new("UIGradient")
-    MainGradient.Color = Themes["Dark Gradient"]
+    MainGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 24)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 10)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+    })
     MainGradient.Rotation = 135
     MainGradient.Parent = Main
 
@@ -899,15 +913,7 @@ function Library:CreateWindow(config)
     end
 
     -- POPULASI FITUR DI SETTINGS PANEL
-    -- 1. GROUP TEMA BACKGROUND (20 TEMA) - Mengubah warna background UI secara langsung tanpa bug
-    local ThemeGroup = buildGroupInContainer(SettingsContainer, "Tema Background", "Settings", false)
-    for themeName, colorSeq in pairs(Themes) do
-        ThemeGroup:AddButton(themeName, "Star", function()
-            MainGradient.Color = colorSeq
-        end)
-    end
-
-    -- 2. GROUP GAYA TEXT (10 FONT)
+    -- GROUP GAYA TEXT (10 FONT)
     local FontGroup = buildGroupInContainer(SettingsContainer, "Gaya Text / Font", "Edit", false)
     for fontName, enumFont in pairs(Fonts) do
         FontGroup:AddButton(fontName, "Edit", function()
@@ -977,7 +983,8 @@ function Library:CreateWindow(config)
         FloatingLogoBtn.Visible = false
     end)
 
-    playRayfieldExecution(titleText, text1, text2, text3, function()
+    -- MEMANGGIL SPINNER & FLASHBANG
+    playRayfieldExecution(titleText, text1, text2, text3, flashText, function()
         TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
             Size = UDim2.new(0, 240, 0, 270)
         }):Play()
