@@ -158,18 +158,18 @@ function Library:Notify(options)
     ContentLbl.TextTransparency = 1
     ContentLbl.Parent = Card
 
-    TweenService:Create(Card, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {BackgroundTransparency = 0.05}):Play()
-    TweenService:Create(CardStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
-    TweenService:Create(SideBar, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
-    TweenService:Create(TitleLbl, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
-    TweenService:Create(ContentLbl, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+    TweenService:Create(Card, TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {BackgroundTransparency = 0.05}):Play()
+    TweenService:Create(CardStroke, TweenInfo.new(0.4), {Transparency = 0}):Play()
+    TweenService:Create(SideBar, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(TitleLbl, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+    TweenService:Create(ContentLbl, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
 
     task.delay(duration, function()
-        local closeTween = TweenService:Create(Card, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {BackgroundTransparency = 1})
-        TweenService:Create(CardStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
-        TweenService:Create(SideBar, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-        TweenService:Create(TitleLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-        TweenService:Create(ContentLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+        local closeTween = TweenService:Create(Card, TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {BackgroundTransparency = 1})
+        TweenService:Create(CardStroke, TweenInfo.new(0.4), {Transparency = 1}):Play()
+        TweenService:Create(SideBar, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(TitleLbl, TweenInfo.new(0.4), {TextTransparency = 1}):Play()
+        TweenService:Create(ContentLbl, TweenInfo.new(0.4), {TextTransparency = 1}):Play()
         closeTween:Play()
         closeTween.Completed:Connect(function() Card:Destroy() end)
     end)
@@ -202,14 +202,14 @@ local function makeDraggable(frame, handle)
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             local delta = input.Position - dragStart
-            TweenService:Create(frame, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            TweenService:Create(frame, TweenInfo.new(0.12, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
                 Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
             }):Play()
         end
     end)
 end
 
--- HELPER COMPONENTS
+-- HELPER COMPONENTS WITH SMOOTH ANIMATIONS
 local function createButton(parent, text, icon, callback)
     if type(icon) == "function" then
         callback = icon
@@ -252,9 +252,11 @@ local function createButton(parent, text, icon, callback)
     BtnLbl.Parent = Btn
 
     Btn.MouseButton1Click:Connect(function()
-        TweenService:Create(BtnStroke, TweenInfo.new(0.1), {Transparency = 0.3}):Play()
+        TweenService:Create(Btn, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0.98, 0, 0, 30)}):Play()
+        TweenService:Create(BtnStroke, TweenInfo.new(0.15), {Transparency = 0.3}):Play()
         task.wait(0.12)
-        TweenService:Create(BtnStroke, TweenInfo.new(0.2), {Transparency = 0.9}):Play()
+        TweenService:Create(Btn, TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 32)}):Play()
+        TweenService:Create(BtnStroke, TweenInfo.new(0.25), {Transparency = 0.9}):Play()
         task.spawn(callback)
     end)
     return Btn
@@ -326,10 +328,10 @@ local function createToggle(parent, text, icon, default, callback)
 
     ClickBtn.MouseButton1Click:Connect(function()
         state = not state
-        TweenService:Create(Box, TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+        TweenService:Create(Box, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
             BackgroundColor3 = state and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(35, 35, 40)
         }):Play()
-        TweenService:Create(InnerDot, TweenInfo.new(0.2), {
+        TweenService:Create(InnerDot, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
             BackgroundTransparency = state and 0 or 1
         }):Play()
         task.spawn(callback, state)
@@ -412,7 +414,9 @@ local function createSlider(parent, text, icon, min, max, default, callback)
     local function updateValue(input)
         local pos = math.clamp((input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
         local value = math.floor(min + (max - min) * pos)
-        Fill.Size = UDim2.new((value - min) / (max - min), 0, 1, 0)
+        TweenService:Create(Fill, TweenInfo.new(0.08, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            Size = UDim2.new((value - min) / (max - min), 0, 1, 0)
+        }):Play()
         ValueLabel.Text = tostring(value)
         task.spawn(callback, value)
     end
@@ -438,7 +442,7 @@ local function createSlider(parent, text, icon, min, max, default, callback)
     return SliderFrame
 end
 
--- ANIMASI EXECUTE
+-- ANIMASI EXECUTE 10 DETIK + TEKS 3 FASA + FLASHBANG 5 DETIK
 local function playRayfieldExecution(title, author, onComplete)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(0, 240, 0, 70)
@@ -479,7 +483,7 @@ local function playRayfieldExecution(title, author, onComplete)
     TitleLbl.Size = UDim2.new(1, -70, 0, 20)
     TitleLbl.Position = UDim2.new(0, 62, 0, 16)
     TitleLbl.BackgroundTransparency = 1
-    TitleLbl.Text = title or "GoodManzz"
+    TitleLbl.Text = title or "GoodManzz Hub"
     TitleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
     TitleLbl.Font = Enum.Font.GothamBold
     TitleLbl.TextSize = 13
@@ -497,7 +501,7 @@ local function playRayfieldExecution(title, author, onComplete)
     AuthorLbl.TextXAlignment = Enum.TextXAlignment.Left
     AuthorLbl.Parent = Card
 
-    local duration = 3.0
+    local duration = 10.0 -- Berputar selama 10 Detik
     local elapsed = 0
     local rotation = 0
 
@@ -505,22 +509,34 @@ local function playRayfieldExecution(title, author, onComplete)
     conn = RunService.RenderStepped:Connect(function(dt)
         elapsed = elapsed + dt
         local progress = math.clamp(elapsed / duration, 0, 1)
-        local speed = 200 + (progress ^ 3) * 2200 
+        
+        -- Semakin lama berputar semakin cepat (Akselerasi)
+        local speed = 120 + (progress ^ 3.5) * 4500 
         rotation = rotation + (speed * dt)
         RingGradient.Rotation = rotation % 360
+
+        -- Update Teks Informasi (3 Tahap)
+        if elapsed < 4.0 then
+            AuthorLbl.Text = "by: " .. (author or "GoodManzz") -- 4 Detik Pertama
+        elseif elapsed < 7.0 then
+            AuthorLbl.Text = "Memuat Modul & Fitur..." -- 3 Detik Kedua
+        else
+            AuthorLbl.Text = "Melakukan Bypassing & Finalisasi..." -- 3 Detik Terakhir
+        end
 
         if elapsed >= duration then
             conn:Disconnect()
             Card:Destroy()
 
+            -- FLASHBANG 5 DETIK KE SELURUH LAYAR
             local Flash = Instance.new("Frame")
             Flash.Size = UDim2.new(1, 0, 1, 0)
             Flash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             Flash.BackgroundTransparency = 0
-            Flash.ZIndex = 999
+            Flash.ZIndex = 9999
             Flash.Parent = ScreenGui
 
-            local flashTween = TweenService:Create(Flash, TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            local flashTween = TweenService:Create(Flash, TweenInfo.new(5.0, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
                 BackgroundTransparency = 1
             })
             flashTween:Play()
@@ -632,6 +648,7 @@ function Library:CreateWindow(config)
     Container.BorderSizePixel = 0
     Container.ScrollBarThickness = 2
     Container.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120)
+    Container.ScrollingEnabled = false -- DEFAULT MATI (HARUS DIPANGGIL FUNGSI PANGGIL SCROLL)
     Container.Parent = Main
 
     local Layout = Instance.new("UIListLayout")
@@ -642,6 +659,19 @@ function Library:CreateWindow(config)
     Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 8)
     end)
+
+    -- FUNGSI KONTROL SCROLL UNTUK PEMAIN
+    function Window:EnableScroll(state)
+        state = (state == nil) and true or state
+        Container.ScrollingEnabled = state
+        if not state then
+            Container.CanvasPosition = Vector2.new(0, 0)
+        end
+    end
+
+    function Window:SetScroll(state)
+        Window:EnableScroll(state)
+    end
 
     local FloatingLogoBtn = Instance.new("ImageButton")
     FloatingLogoBtn.Name = "FloatingLogoBtn"
@@ -669,8 +699,9 @@ function Library:CreateWindow(config)
         FloatingLogoBtn.Visible = false
     end)
 
+    -- ANIMASI EXECUTE DIPANGGIL
     playRayfieldExecution(titleText, authorText, function()
-        TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
             Size = UDim2.new(0, 240, 0, 270)
         }):Play()
 
@@ -686,13 +717,13 @@ function Library:CreateWindow(config)
     MinBtn.MouseButton1Click:Connect(function()
         isMinimized = not isMinimized
         local targetSize = isMinimized and UDim2.new(0, 240, 0, 36) or UDim2.new(0, 240, 0, 270)
-        TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+        TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
             Size = targetSize
         }):Play()
     end)
 
     CloseBtn.MouseButton1Click:Connect(function()
-        local closeTween = TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {
+        local closeTween = TweenService:Create(Main, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 240, 0, 0)
         })
         closeTween:Play()
@@ -713,7 +744,6 @@ function Library:CreateWindow(config)
         return createSlider(Container, text, icon, min, max, default, callback)
     end
 
-    -- PERBAIKAN UTAMA DI FUNGSI PEMBUNGKUS (AddGroup)
     function Window:AddGroup(groupName, icon, defaultCollapsed)
         if type(icon) == "boolean" then
             defaultCollapsed = icon
@@ -792,7 +822,7 @@ function Library:CreateWindow(config)
             ContentHolder.Size = UDim2.new(1, -12, 0, contentHeight)
             local targetHeight = isCollapsed and 32 or (34 + contentHeight + 6)
             
-            TweenService:Create(GroupFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            TweenService:Create(GroupFrame, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {
                 Size = UDim2.new(1, 0, 0, targetHeight)
             }):Play()
         end
