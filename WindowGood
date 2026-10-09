@@ -1,9 +1,48 @@
 local Library = {}
 
+-- Preset Icon Registry (Lebih dari 20 Icon)
+Library.Icons = {
+    ["Logo"]     = "rbxassetid://107391174248131",
+    ["Settings"] = "rbxassetid://10734983868",
+    ["Gear"]     = "rbxassetid://10734983868",
+    ["Star"]     = "rbxassetid://10734982136",
+    ["Home"]     = "rbxassetid://10723415903",
+    ["User"]     = "rbxassetid://10709772834",
+    ["Bell"]     = "rbxassetid://10723380028",
+    ["Check"]    = "rbxassetid://10709790644",
+    ["Cross"]    = "rbxassetid://10709790258",
+    ["Info"]     = "rbxassetid://10723415903",
+    ["Warning"]  = "rbxassetid://10734983020",
+    ["Error"]    = "rbxassetid://10709790258",
+    ["Lock"]     = "rbxassetid://10734982602",
+    ["Shield"]   = "rbxassetid://10734982136",
+    ["Search"]   = "rbxassetid://10734981750",
+    ["Refresh"]  = "rbxassetid://10734981320",
+    ["Trash"]    = "rbxassetid://10734980890",
+    ["Edit"]     = "rbxassetid://10734980420",
+    ["Play"]     = "rbxassetid://10734979950",
+    ["Pause"]    = "rbxassetid://10734979480",
+    ["Code"]     = "rbxassetid://10734979010",
+    ["Crown"]    = "rbxassetid://10734978540",
+    ["Click"]    = "rbxassetid://10734978000",
+    ["Sword"]    = "rbxassetid://10723344320"
+}
+
+local function getIconId(icon)
+    if not icon or icon == "" then return nil end
+    if Library.Icons[icon] then
+        return Library.Icons[icon]
+    elseif type(icon) == "string" and not icon:find("rbxassetid://") and tonumber(icon) then
+        return "rbxassetid://" .. icon
+    end
+    return icon
+end
+
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local TargetParent
 if gethui then
@@ -24,6 +63,7 @@ ScreenGui.Name = "DarkGradientLibrary"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = TargetParent
 
+-- Notif Holder
 local NotifHolder = Instance.new("Frame")
 NotifHolder.Name = "NotifHolder"
 NotifHolder.Size = UDim2.new(0, 230, 1, -20)
@@ -54,7 +94,7 @@ function Library:Notify(options)
 
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(1, 0, 0, 52)
-    Card.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+    Card.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
     Card.BackgroundTransparency = 1
     Card.BorderSizePixel = 0
     Card.ClipsDescendants = true
@@ -63,14 +103,6 @@ function Library:Notify(options)
     local CardCorner = Instance.new("UICorner")
     CardCorner.CornerRadius = UDim.new(0, 8)
     CardCorner.Parent = Card
-
-    local CardGradient = Instance.new("UIGradient")
-    CardGradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 25)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 5, 5))
-    })
-    CardGradient.Rotation = 45
-    CardGradient.Parent = Card
 
     local CardStroke = Instance.new("UIStroke")
     CardStroke.Color = sideColor
@@ -107,7 +139,7 @@ function Library:Notify(options)
     ContentLbl.Position = UDim2.new(0, 18, 0, 24)
     ContentLbl.BackgroundTransparency = 1
     ContentLbl.Text = content
-    ContentLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ContentLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
     ContentLbl.TextSize = 11
     ContentLbl.Font = Enum.Font.Gotham
     ContentLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -128,9 +160,7 @@ function Library:Notify(options)
         TweenService:Create(TitleLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
         TweenService:Create(ContentLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
         closeTween:Play()
-        closeTween.Completed:Connect(function()
-            Card:Destroy()
-        end)
+        closeTween.Completed:Connect(function() Card:Destroy() end)
     end)
 end
 
@@ -168,63 +198,103 @@ local function makeDraggable(frame, handle)
     end)
 end
 
-local function playExecutionSequence(onComplete)
-    local SpinnerFrame = Instance.new("Frame")
-    SpinnerFrame.Size = UDim2.new(0, 70, 0, 70)
-    SpinnerFrame.Position = UDim2.new(0.5, -35, 0.5, -35)
-    SpinnerFrame.BackgroundTransparency = 1
-    SpinnerFrame.Parent = ScreenGui
+-- ANIMASI EXECUTE (RAYFIELD STYLE + FLASHBANG 2 DETIK)
+local function playRayfieldExecution(title, author, onComplete)
+    local Card = Instance.new("Frame")
+    Card.Size = UDim2.new(0, 240, 0, 70)
+    Card.Position = UDim2.new(0.5, -120, 0.5, -35)
+    Card.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+    Card.BorderSizePixel = 0
+    Card.Parent = ScreenGui
 
-    local Ring = Instance.new("Frame")
-    Ring.Size = UDim2.new(1, 0, 1, 0)
-    Ring.BackgroundTransparency = 1
-    Ring.Parent = SpinnerFrame
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 10)
+    Corner.Parent = Card
+
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Color = Color3.fromRGB(255, 255, 255)
+    Stroke.Transparency = 0.85
+    Stroke.Parent = Card
+
+    -- Spinner Ring
+    local Spinner = Instance.new("Frame")
+    Spinner.Size = UDim2.new(0, 38, 0, 38)
+    Spinner.Position = UDim2.new(0, 15, 0.5, -19)
+    Spinner.BackgroundTransparency = 1
+    Spinner.Parent = Card
 
     local RingStroke = Instance.new("UIStroke")
-    RingStroke.Thickness = 4
+    RingStroke.Thickness = 3
     RingStroke.Color = Color3.fromRGB(255, 255, 255)
-    RingStroke.Parent = Ring
+    RingStroke.Parent = Spinner
 
     local RingCorner = Instance.new("UICorner")
     RingCorner.CornerRadius = UDim.new(1, 0)
-    RingCorner.Parent = Ring
+    RingCorner.Parent = Spinner
 
     local RingGradient = Instance.new("UIGradient")
     RingGradient.Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 100, 100)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(80, 80, 80)),
         ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 15, 15))
     })
     RingGradient.Parent = RingStroke
 
-    local duration = 5
+    -- Info Text
+    local TitleLbl = Instance.new("TextLabel")
+    TitleLbl.Size = UDim2.new(1, -70, 0, 20)
+    TitleLbl.Position = UDim2.new(0, 62, 0, 16)
+    TitleLbl.BackgroundTransparency = 1
+    TitleLbl.Text = title or "GoodManzz Hub"
+    TitleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLbl.Font = Enum.Font.GothamBold
+    TitleLbl.TextSize = 13
+    TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLbl.Parent = Card
+
+    local AuthorLbl = Instance.new("TextLabel")
+    AuthorLbl.Size = UDim2.new(1, -70, 0, 16)
+    AuthorLbl.Position = UDim2.new(0, 62, 0, 36)
+    AuthorLbl.BackgroundTransparency = 1
+    AuthorLbl.Text = "by: " .. (author or "GoodManzz")
+    AuthorLbl.TextColor3 = Color3.fromRGB(160, 160, 170)
+    AuthorLbl.Font = Enum.Font.GothamMedium
+    AuthorLbl.TextSize = 11
+    AuthorLbl.TextXAlignment = Enum.TextXAlignment.Left
+    AuthorLbl.Parent = Card
+
+    -- Putaran Spinner (4-5 Detik)
+    local duration = 4.5
     local elapsed = 0
     local rotation = 0
 
-    local connection
-    connection = game:GetService("RunService").RenderStepped:Connect(function(dt)
+    local conn
+    conn = RunService.RenderStepped:Connect(function(dt)
         elapsed = elapsed + dt
         local progress = math.clamp(elapsed / duration, 0, 1)
-        local speed = 180 + (progress ^ 3) * 2000 
+        local speed = 200 + (progress ^ 3) * 2200 
         rotation = rotation + (speed * dt)
         RingGradient.Rotation = rotation % 360
 
         if elapsed >= duration then
-            connection:Disconnect()
-            SpinnerFrame:Destroy()
+            conn:Disconnect()
+            Card:Destroy()
 
+            -- FLASHBANG 2 DETIK
             local Flash = Instance.new("Frame")
             Flash.Size = UDim2.new(1, 0, 1, 0)
             Flash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             Flash.BackgroundTransparency = 0
-            Flash.ZIndex = 100
+            Flash.ZIndex = 999
             Flash.Parent = ScreenGui
 
-            TweenService:Create(Flash, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+            -- Fade out selama 2 detik
+            local flashTween = TweenService:Create(Flash, TweenInfo.new(2.0, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
                 BackgroundTransparency = 1
-            }):Play()
+            })
+            flashTween:Play()
 
-            task.delay(0.6, function()
+            flashTween.Completed:Connect(function()
                 Flash:Destroy()
             end)
 
@@ -236,6 +306,8 @@ end
 function Library:CreateWindow(config)
     config = config or {}
     local titleText = config.Name or "Dark Hub"
+    local authorText = config.Author or "GoodManzz"
+    local mainLogo = getIconId(config.Logo or "Logo")
 
     local Window = {}
 
@@ -274,9 +346,20 @@ function Library:CreateWindow(config)
 
     makeDraggable(Main, Header)
 
+    -- Header Icon
+    local HeaderIcon
+    if mainLogo then
+        HeaderIcon = Instance.new("ImageLabel")
+        HeaderIcon.Size = UDim2.new(0, 18, 0, 18)
+        HeaderIcon.Position = UDim2.new(0, 10, 0, 9)
+        HeaderIcon.BackgroundTransparency = 1
+        HeaderIcon.Image = mainLogo
+        HeaderIcon.Parent = Header
+    end
+
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, -65, 1, 0)
-    Title.Position = UDim2.new(0, 12, 0, 0)
+    Title.Size = UDim2.new(1, mainLogo and -75 or -65, 1, 0)
+    Title.Position = UDim2.new(0, mainLogo and 34 or 12, 0, 0)
     Title.BackgroundTransparency = 1
     Title.Text = titleText
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -331,7 +414,35 @@ function Library:CreateWindow(config)
         Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 8)
     end)
 
-    playExecutionSequence(function()
+    -- TOMBOL KOTAK KECIL DENGAN LOGO (OPEN/HIDE TOGGLE)
+    local ToggleLogoBtn = Instance.new("ImageButton")
+    ToggleLogoBtn.Name = "ToggleLogoBtn"
+    ToggleLogoBtn.Size = UDim2.new(0, 38, 0, 38)
+    ToggleLogoBtn.Position = UDim2.new(0, 15, 0.3, 0)
+    ToggleLogoBtn.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
+    ToggleLogoBtn.Image = mainLogo or Library.Icons["Logo"]
+    ToggleLogoBtn.Parent = ScreenGui
+
+    local ToggleCorner = Instance.new("UICorner")
+    ToggleCorner.CornerRadius = UDim.new(0, 8)
+    ToggleCorner.Parent = ToggleLogoBtn
+
+    local ToggleStroke = Instance.new("UIStroke")
+    ToggleStroke.Color = Color3.fromRGB(255, 255, 255)
+    ToggleStroke.Thickness = 1
+    ToggleStroke.Transparency = 0.8
+    ToggleStroke.Parent = ToggleLogoBtn
+
+    makeDraggable(ToggleLogoBtn)
+
+    local isWindowVisible = true
+    ToggleLogoBtn.MouseButton1Click:Connect(function()
+        isWindowVisible = not isWindowVisible
+        Main.Visible = isWindowVisible
+    end)
+
+    -- Jalankan animasi Rayfield + Flashbang
+    playRayfieldExecution(titleText, authorText, function()
         TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
             Size = UDim2.new(0, 240, 0, 270)
         }):Play()
@@ -363,15 +474,19 @@ function Library:CreateWindow(config)
         end)
     end)
 
-    function Window:AddButton(text, callback)
+    -- ADD BUTTON DENGAN SUPPORT ICON
+    function Window:AddButton(text, icon, callback)
+        if type(icon) == "function" then
+            callback = icon
+            icon = nil
+        end
         callback = callback or function() end
+        local iconId = getIconId(icon)
+
         local Btn = Instance.new("TextButton")
         Btn.Size = UDim2.new(1, 0, 0, 32)
         Btn.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
-        Btn.Text = text
-        Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Btn.TextSize = 12
-        Btn.Font = Enum.Font.GothamMedium
+        Btn.Text = ""
         Btn.Parent = Container
 
         local BtnCorner = Instance.new("UICorner")
@@ -384,6 +499,28 @@ function Library:CreateWindow(config)
         BtnStroke.Transparency = 0.9
         BtnStroke.Parent = Btn
 
+        local xOffset = 10
+        if iconId then
+            local BtnIcon = Instance.new("ImageLabel")
+            BtnIcon.Size = UDim2.new(0, 16, 0, 16)
+            BtnIcon.Position = UDim2.new(0, 10, 0.5, -8)
+            BtnIcon.BackgroundTransparency = 1
+            BtnIcon.Image = iconId
+            BtnIcon.Parent = Btn
+            xOffset = 32
+        end
+
+        local BtnLbl = Instance.new("TextLabel")
+        BtnLbl.Size = UDim2.new(1, -(xOffset + 10), 1, 0)
+        BtnLbl.Position = UDim2.new(0, xOffset, 0, 0)
+        BtnLbl.BackgroundTransparency = 1
+        BtnLbl.Text = text
+        BtnLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+        BtnLbl.TextSize = 12
+        BtnLbl.Font = Enum.Font.GothamMedium
+        BtnLbl.TextXAlignment = Enum.TextXAlignment.Left
+        BtnLbl.Parent = Btn
+
         Btn.MouseButton1Click:Connect(function()
             TweenService:Create(BtnStroke, TweenInfo.new(0.1), {Transparency = 0.3}):Play()
             task.wait(0.12)
@@ -392,9 +529,16 @@ function Library:CreateWindow(config)
         end)
     end
 
-    function Window:AddToggle(text, default, callback)
+    -- ADD TOGGLE DENGAN SUPPORT ICON
+    function Window:AddToggle(text, icon, default, callback)
+        if type(icon) == "boolean" then
+            callback = default
+            default = icon
+            icon = nil
+        end
         callback = callback or function() end
         local state = default or false
+        local iconId = getIconId(icon)
 
         local ToggleFrame = Instance.new("Frame")
         ToggleFrame.Size = UDim2.new(1, 0, 0, 32)
@@ -411,9 +555,20 @@ function Library:CreateWindow(config)
         ToggleStroke.Transparency = 0.9
         ToggleStroke.Parent = ToggleFrame
 
+        local xOffset = 10
+        if iconId then
+            local TogIcon = Instance.new("ImageLabel")
+            TogIcon.Size = UDim2.new(0, 16, 0, 16)
+            TogIcon.Position = UDim2.new(0, 10, 0.5, -8)
+            TogIcon.BackgroundTransparency = 1
+            TogIcon.Image = iconId
+            TogIcon.Parent = ToggleFrame
+            xOffset = 32
+        end
+
         local Label = Instance.new("TextLabel")
-        Label.Size = UDim2.new(1, -45, 1, 0)
-        Label.Position = UDim2.new(0, 10, 0, 0)
+        Label.Size = UDim2.new(1, -(xOffset + 35), 1, 0)
+        Label.Position = UDim2.new(0, xOffset, 0, 0)
         Label.BackgroundTransparency = 1
         Label.Text = text
         Label.TextColor3 = Color3.fromRGB(255, 255, 255)
