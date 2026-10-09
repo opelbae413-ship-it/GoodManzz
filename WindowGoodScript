@@ -209,7 +209,46 @@ local function makeDraggable(frame, handle)
     end)
 end
 
--- HELPER COMPONENTS WITH SMOOTH ANIMATIONS
+-- RESIZABLE HANDLE LOGIC (BESARIN & KECILIN UI)
+local function makeResizable(frame, handle, minWidth, minHeight)
+    minWidth = minWidth or 180
+    minHeight = minHeight or 140
+    local resizing, dragInput, dragStart, startSize
+
+    handle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            resizing = true
+            dragStart = input.Position
+            startSize = frame.AbsoluteSize
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    resizing = false
+                end
+            end)
+        end
+    end)
+
+    handle.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and resizing then
+            local delta = input.Position - dragStart
+            local newWidth = math.max(minWidth, startSize.X + delta.X)
+            local newHeight = math.max(minHeight, startSize.Y + delta.Y)
+            
+            TweenService:Create(frame, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
+                Size = UDim2.new(0, newWidth, 0, newHeight)
+            }):Play()
+        end
+    end)
+end
+
+-- HELPER COMPONENTS
 local function createButton(parent, text, icon, callback)
     if type(icon) == "function" then
         callback = icon
@@ -442,8 +481,8 @@ local function createSlider(parent, text, icon, min, max, default, callback)
     return SliderFrame
 end
 
--- ANIMASI EXECUTE 10 DETIK + TEKS 3 FASA + FLASHBANG 5 DETIK
-local function playRayfieldExecution(title, author, onComplete)
+-- ANIMASI EXECUTE 10 DETIK + TEKS CUSTOMIZABLE + FLASHBANG DIAM 5 DETIK
+local function playRayfieldExecution(title, txt1, txt2, txt3, onComplete)
     local Card = Instance.new("Frame")
     Card.Size = UDim2.new(0, 240, 0, 70)
     Card.Position = UDim2.new(0.5, -120, 0.5, -35)
@@ -494,14 +533,14 @@ local function playRayfieldExecution(title, author, onComplete)
     AuthorLbl.Size = UDim2.new(1, -70, 0, 16)
     AuthorLbl.Position = UDim2.new(0, 62, 0, 36)
     AuthorLbl.BackgroundTransparency = 1
-    AuthorLbl.Text = "by: " .. (author or "GoodManzz")
+    AuthorLbl.Text = txt1
     AuthorLbl.TextColor3 = Color3.fromRGB(160, 160, 170)
     AuthorLbl.Font = Enum.Font.GothamMedium
     AuthorLbl.TextSize = 11
     AuthorLbl.TextXAlignment = Enum.TextXAlignment.Left
     AuthorLbl.Parent = Card
 
-    local duration = 10.0 -- Berputar selama 10 Detik
+    local duration = 10.0 -- Rotasi 10 Detik
     local elapsed = 0
     local rotation = 0
 
@@ -510,42 +549,36 @@ local function playRayfieldExecution(title, author, onComplete)
         elapsed = elapsed + dt
         local progress = math.clamp(elapsed / duration, 0, 1)
         
-        -- Semakin lama berputar semakin cepat (Akselerasi)
+        -- Semakin lama semakin cepat berputar
         local speed = 120 + (progress ^ 3.5) * 4500 
         rotation = rotation + (speed * dt)
         RingGradient.Rotation = rotation % 360
 
-        -- Update Teks Informasi (3 Tahap)
+        -- Update 3 Teks Informasi
         if elapsed < 4.0 then
-            AuthorLbl.Text = "by: " .. (author or "GoodManzz") -- 4 Detik Pertama
+            AuthorLbl.Text = txt1
         elseif elapsed < 7.0 then
-            AuthorLbl.Text = "Memuat Modul & Fitur..." -- 3 Detik Kedua
+            AuthorLbl.Text = txt2
         else
-            AuthorLbl.Text = "Melakukan Bypassing & Finalisasi..." -- 3 Detik Terakhir
+            AuthorLbl.Text = txt3
         end
 
         if elapsed >= duration then
             conn:Disconnect()
             Card:Destroy()
 
-            -- FLASHBANG 5 DETIK KE SELURUH LAYAR
+            -- FLASHBANG FULL PUTIH DIAM SELAMA 5 DETIK
             local Flash = Instance.new("Frame")
             Flash.Size = UDim2.new(1, 0, 1, 0)
             Flash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            Flash.BackgroundTransparency = 0
+            Flash.BackgroundTransparency = 0 -- Full Putih
             Flash.ZIndex = 9999
             Flash.Parent = ScreenGui
 
-            local flashTween = TweenService:Create(Flash, TweenInfo.new(5.0, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-                BackgroundTransparency = 1
-            })
-            flashTween:Play()
-
-            flashTween.Completed:Connect(function()
+            task.delay(5.0, function()
                 Flash:Destroy()
+                if onComplete then onComplete() end
             end)
-
-            if onComplete then onComplete() end
         end
     end)
 end
@@ -555,6 +588,11 @@ function Library:CreateWindow(config)
     local titleText = config.Name or "Dark Hub"
     local authorText = config.Author or "GoodManzz"
     local mainLogo = getIconId(config.Logo or "Logo")
+
+    -- DUKUNGAN CUSTOM TEKS LOADING DARI USER SCRIPT
+    local text1 = config.Text1 or ("by:" .. authorText)
+    local text2 = config.Text2 or "Injeksi Game"
+    local text3 = config.Text3 or "Menyiapkan Ui"
 
     local Window = {}
 
@@ -648,7 +686,7 @@ function Library:CreateWindow(config)
     Container.BorderSizePixel = 0
     Container.ScrollBarThickness = 2
     Container.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120)
-    Container.ScrollingEnabled = false -- DEFAULT MATI (HARUS DIPANGGIL FUNGSI PANGGIL SCROLL)
+    Container.ScrollingEnabled = false
     Container.Parent = Main
 
     local Layout = Instance.new("UIListLayout")
@@ -660,7 +698,25 @@ function Library:CreateWindow(config)
         Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 8)
     end)
 
-    -- FUNGSI KONTROL SCROLL UNTUK PEMAIN
+    -- RESIZE GRIP/HANDLE (POJOK KANAN BAWAH UTK RESIZE UI)
+    local ResizeGrip = Instance.new("Frame")
+    ResizeGrip.Name = "ResizeGrip"
+    ResizeGrip.Size = UDim2.new(0, 14, 0, 14)
+    ResizeGrip.Position = UDim2.new(1, -14, 1, -14)
+    ResizeGrip.BackgroundTransparency = 1
+    ResizeGrip.Parent = Main
+
+    local GripIcon = Instance.new("TextLabel")
+    GripIcon.Size = UDim2.new(1, 0, 1, 0)
+    GripIcon.BackgroundTransparency = 1
+    GripIcon.Text = "◢"
+    GripIcon.TextColor3 = Color3.fromRGB(150, 150, 160)
+    GripIcon.TextSize = 10
+    GripIcon.Font = Enum.Font.GothamBold
+    GripIcon.Parent = ResizeGrip
+
+    makeResizable(Main, ResizeGrip, 200, 150)
+
     function Window:EnableScroll(state)
         state = (state == nil) and true or state
         Container.ScrollingEnabled = state
@@ -699,8 +755,8 @@ function Library:CreateWindow(config)
         FloatingLogoBtn.Visible = false
     end)
 
-    -- ANIMASI EXECUTE DIPANGGIL
-    playRayfieldExecution(titleText, authorText, function()
+    -- EXECUTE ANIMATION
+    playRayfieldExecution(titleText, text1, text2, text3, function()
         TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
             Size = UDim2.new(0, 240, 0, 270)
         }):Play()
